@@ -1,9 +1,17 @@
+#ifndef BLOCKS_HPP
+#define BLOCKS_HPP
+
 #include <ncurses.h>
+#include <unordered_map>
 
 #include "../gfx_core.hpp"
 
-namespace Blocks {
-  struct Dirt {
-    static const chtype *repr() { FACTORY_RET('1', '0'); }
-  };
+struct BlockData {
+  const chtype repr[3];
 };
+
+namespace Blocks {
+  extern BlockData dirt;
+};
+
+#endif

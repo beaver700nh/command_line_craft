@@ -1,13 +1,11 @@
 #include <iostream>
 #include <ncurses.h>
+#include <cstdlib>
 
 #include "game.hpp"
 
-#include "colortest.hpp"
-
 int main() {
-  // colortest();
-  // return 0;
+  atexit(end);
 
   init();
 

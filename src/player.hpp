@@ -14,8 +14,8 @@ struct PlayerReprs {
 class Player {
   public:
     Player();
-    Player(WINDOW *win, Unit up1, Unit up2, Unit dn1, Unit dn2);
-    void draw(int row, int col);
+    Player(Unit up1, Unit up2, Unit dn1, Unit dn2);
+    void draw(WINDOW *win, int row, int col);
 
     bool standing = true;
 
@@ -24,8 +24,6 @@ class Player {
     Unit up2;
     Unit dn1;
     Unit dn2;
-
-    WINDOW *win;
 };
 
 #endif

@@ -38,5 +38,5 @@ void World::draw(WINDOW *win, Coords coords) {
 }
 
 void World::generate() {
-  plane = Plane<Unit>(Unit(Blocks::Dirt::repr(), 0), CHUNK_WIDTH * chunk_radius, 256);
+  plane = Plane<Unit>(Unit(Blocks::dirt.repr, 0), CHUNK_WIDTH * chunk_radius, 256);
 }

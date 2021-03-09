@@ -1,7 +1,5 @@
 #include <ncurses.h>
 
-#include "colortest.hpp"
-
 void colortest() {
   initscr();
   cbreak();
@@ -49,4 +47,9 @@ void colortest() {
 
   curs_set(1);
   endwin();
+}
+
+int main() {
+  colortest();
+  return 0;
 }

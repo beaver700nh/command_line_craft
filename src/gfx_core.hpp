@@ -5,8 +5,9 @@
 
 #include "scale_macros.hpp"
 
-#define FACTORY_VAL(ch1, ch2) static const chtype val[3] = {(ch1), (ch2), '\0'};
-#define FACTORY_RET(ch1, ch2) FACTORY_VAL((ch1), (ch2)); return val;
+#define FACTORY_VAL(ch1, ch2) {(ch1), (ch2), '\0'}
+#define FACTORY_VAR(ch1, ch2) static const chtype val[3] = {(ch1), (ch2), '\0'};
+#define FACTORY_RET(ch1, ch2) FACTORY_VAR((ch1), (ch2)); return val;
 
 #define GRAVITY 0x10
 #define INERT   0x01
