@@ -1,18 +1,17 @@
 #include <ncurses.h>
 #include <sstream>
 
-#include "misc.hpp"
+#include <ncurses.h>
 
 #include "debug_print.hpp"
 
-void d_print_coords(int row, int col, Coords *coords) {
-  std::stringstream ss_x;
-  ss_x << "x: " << coords->x;
+void d_print_maxwin(WINDOW *win, int row, int col, WINDOW *to_test) {
+  int rows, cols;
+  getmaxyx(to_test, rows, cols);
 
-  std::stringstream ss_y;
-  ss_y << "y: " << coords->y;
+  char buf[50];
+  sprintf(buf, "maxy: %d, maxx: %d", rows, cols);
 
-  mvaddstr(row,   col, "d_print_coords (0, 0 relative):");
-  mvaddstr(row+1, col, ss_x.str().c_str());
-  mvaddstr(row+2, col, ss_y.str().c_str());
+  mvwaddstr(win, row,   col, "d_print_maxwin():");
+  mvwaddstr(win, row+1, col, buf);
 }

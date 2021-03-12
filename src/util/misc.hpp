@@ -3,6 +3,8 @@
 
 #include <ncurses.h>
 
+#define dwborder(win) wborder(win, 0, 0, 0, 0, 0, 0, 0, 0)
+
 class Coords {
   public:
     long x = 0, y = 0;

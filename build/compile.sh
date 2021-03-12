@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function execute() {
   echo -e "\x1b[32m================ Executing (Main Program) ... ================\x1b[0m"
   sleep 2
@@ -10,7 +12,13 @@ function execute_color_test() {
   ./build/colortest
 }
 
-read -p "Action? [c/e/o] " action
+if [ $# == 1 ]; then
+  action=$1
+
+else
+  read -p "Action? [c/e/o] " action
+
+fi
 
 if [[ "$action" == "C" || "$action" == "c" || "$action" == "" ]]; then
   echo -e "\x1b[32m================ Compiling (Main Program) ... ================\x1b[0m"

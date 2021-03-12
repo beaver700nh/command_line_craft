@@ -10,9 +10,7 @@ int main() {
   init();
 
   while (true) {
-    int result = tick();
-
-    if (result == -1) {
+    if (tick() == -1) {
       break;
     }
   }

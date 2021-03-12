@@ -1,7 +1,11 @@
+#include <ncurses.h>
 #include "keypress.hpp"
 
 int handle_keypress(int ch) {
-  if (ch == 27) {
+  if (ch == ERR) {
+    return ActionMisc::idle;
+  }
+  else if (ch == 27) {
     return ActionMisc::quit;
   }
   else if (ch == 'w') {

@@ -9,8 +9,9 @@ namespace ActionMove {
 };
 
 namespace ActionMisc {
-  constexpr int other = 0;
-  constexpr int quit = -1;
+  constexpr int idle  = 0;
+  constexpr int quit  = -1;
+  constexpr int other = -2;
 }
 
 int handle_keypress(int ch);
