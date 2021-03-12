@@ -14,6 +14,24 @@ Unit::Unit() {
 }
 
 Unit::Unit(const chtype *repr, int color_pair) {
+  ctor_helper(repr, color_pair);
+}
+
+Unit::Unit(const chtype *repr, int color_pair, int fg, int bg) {
+  init_pair(color_pair, fg, bg);
+  ctor_helper(repr, color_pair);
+}
+
+Unit::Unit(const char *repr, int color_pair) {
+  ctor_helper(repr, color_pair);
+}
+
+Unit::Unit(const char *repr, int color_pair, int fg, int bg) {
+  init_pair(color_pair, fg, bg);
+  ctor_helper(repr, color_pair);
+}
+
+void Unit::ctor_helper(const chtype *repr, int color_pair) {
   memcpy(this->wrepr, repr, (sizeof repr) * 3);
   this->wrepr[2] = '\0';
   this->color_pair = color_pair;
@@ -21,12 +39,7 @@ Unit::Unit(const chtype *repr, int color_pair) {
   this->is_wide = true;
 }
 
-Unit::Unit(const chtype *repr, int color_pair, int fg, int bg) {
-  init_pair(color_pair, fg, bg);
-  Unit(repr, color_pair);
-}
-
-Unit::Unit(const char *repr, int color_pair) {
+void Unit::ctor_helper(const char *repr, int color_pair) {
   memcpy(this->nrepr, repr, (sizeof repr) * 3);
   this->nrepr[2] = '\0';
   this->color_pair = color_pair;
@@ -34,23 +47,20 @@ Unit::Unit(const char *repr, int color_pair) {
   this->is_wide = false;
 }
 
-Unit::Unit(const char *repr, int color_pair, int fg, int bg) {
-  init_pair(color_pair, fg, bg);
-  Unit(repr, color_pair);
-}
+void Unit::draw(WINDOW *win, int row, int col, bool should_offset) {
+  float offset = (should_offset ? 0.5 : 0);
 
-void Unit::draw(WINDOW *win, int row, int col) {
-  attron(COLOR_PAIR(color_pair));
+  wattron(win, COLOR_PAIR(color_pair));
 
   if (is_wide) {
-    s_mvwaddch(win, row, col,     wrepr[0]);
-    s_mvwaddch(win, row, col+0.5, wrepr[1]); // the 0.5 gets multiplied by 2 to get 1
+    s_mvwaddch(win, row + (offset * 2), col + offset,       wrepr[0]); // times 2 because rows are not scaled
+    s_mvwaddch(win, row + (offset * 2), col + offset + 0.5, wrepr[1]); // the 0.5 gets becomes 1 because cols are scaled
   }
   else {
     s_mvwaddstr(win, row, col, nrepr);
   }
 
-  attroff(COLOR_PAIR(color_pair));
+  wattroff(win, COLOR_PAIR(color_pair));
 }
 
 /*************** Item ***************/

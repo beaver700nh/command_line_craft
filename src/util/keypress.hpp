@@ -12,7 +12,16 @@ namespace ActionMisc {
   constexpr int idle  = 0;
   constexpr int quit  = -1;
   constexpr int other = -2;
-}
+};
+
+namespace ActionInteract {
+  constexpr int press = 0;
+  constexpr int flick = 1;
+  constexpr int inven = 2;
+  constexpr int chest = 3;
+  constexpr int door  = 4;
+  constexpr int sleep = 5;
+};
 
 int handle_keypress(int ch);
 

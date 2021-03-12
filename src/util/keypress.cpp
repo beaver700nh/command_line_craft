@@ -20,6 +20,9 @@ int handle_keypress(int ch) {
   else if (ch == 'd') {
     return ActionMove::right;
   }
+  else if (ch == 'e') { // TEMPORARY
+    return ActionInteract::sleep;
+  }
   else {
     return ActionMisc::other;
   }

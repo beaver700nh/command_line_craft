@@ -12,6 +12,7 @@
 #include "util/prelim.hpp"
 
 #include "data/blocks.hpp"
+#include "data/colors.hpp"
 
 #define ESC 27
 
@@ -44,40 +45,37 @@ void init() {
 
   curses_init_win(gamewin);
   curses_init_win(debugwin);
+
+  curses_init_pairs();
 }
 
 int input() {
 	int ch = wgetch(gamewin);
   int result = handle_keypress(ch);
 
-  if (result == ActionMisc::idle) {
-    return 0;
-  }
-  else if (result == ActionMisc::quit) {
+  if (result == ActionMisc::quit) {
     return -1;
   }
   else if (result == ActionMove::up) {
     ++coords.y;
-    return 0;
   }
   else if (result == ActionMove::left) {
     --coords.x;
-    return 0;
   }
   else if (result == ActionMove::down) {
     --coords.y;
-    return 0;
   }
   else if (result == ActionMove::right) {
     ++coords.x;
-    return 0;
   }
-  else if (result == ActionMisc::other) {
-    return 0;
+  else if (result == ActionInteract::sleep) {
+    player.standing = !player.standing;
   }
   else {
     return -2;
   }
+
+  return 0;
 }
 
 void output() {
@@ -85,15 +83,18 @@ void output() {
 	werase(debugwin);
 
 	dwborder(debugwin);
+
+  wattron(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 	dwborder(gamewin);
+  wattroff(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 
   coords.d_print(debugwin, 1, 3);
   //world.plane.d_print(debugwin, 1, 32);
   d_print_maxwin(debugwin, 1, 32, gamewin);
 
-  world.draw(gamewin, 0, 0);
+  world.draw(gamewin, 0, 0, true);
 
-  player.draw(gamewin, coords.y, coords.x);
+  player.draw(gamewin, GW_ROWS/2 - 2, GW_COLS/4, true);
 
   wrefresh(gamewin);
 	wrefresh(debugwin);
