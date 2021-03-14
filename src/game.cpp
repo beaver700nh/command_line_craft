@@ -17,7 +17,7 @@
 #define ESC 27
 
 #define US_PER_SEC 1000000
-#define TARGET_FPS 24
+#define TARGET_FPS 30
 
 Coords coords;
 Player player;
@@ -26,7 +26,7 @@ World  world;
 WINDOW *gamewin;
 WINDOW *debugwin;
 
-int GW_ROWS, GW_COLS;
+int GW_ROWS, GW_COLS, GW_CTRY, GW_CTRX, GW_CTRR, GW_CTRC;
 
 void init() {
   curses_init_seq();
@@ -37,9 +37,14 @@ void init() {
   );
 
   world = World(3);
+  world.plane.set_data(5, 5, Unit("%%", 0));
 
   gamewin = newwin(26, 50, 5, 9);
   getmaxyx(gamewin, GW_ROWS, GW_COLS);
+  GW_CTRR = GW_ROWS/2;
+  GW_CTRC = GW_COLS/2;
+  GW_CTRY = GW_CTRR;
+  GW_CTRX = GW_CTRC/2;
 
   debugwin = newwin(4, 52, 0, 8);
 
@@ -89,12 +94,12 @@ void output() {
   wattroff(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 
   coords.d_print(debugwin, 1, 3);
-  //world.plane.d_print(debugwin, 1, 32);
+  // world.plane.d_print(debugwin, 1, 32);
   d_print_maxwin(debugwin, 1, 32, gamewin);
 
-  world.draw(gamewin, 0, 0, true);
+  world.draw(gamewin, -GW_CTRX - coords.x, -GW_CTRY - coords.y, true);
 
-  player.draw(gamewin, GW_ROWS/2 - 2, GW_COLS/4, true);
+  player.draw(gamewin, GW_CTRY - 2, GW_CTRX - 2, true);
 
   wrefresh(gamewin);
 	wrefresh(debugwin);
