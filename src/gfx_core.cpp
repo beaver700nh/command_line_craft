@@ -53,11 +53,11 @@ void Unit::draw(WINDOW *win, int row, int col, bool should_offset) {
   wattron(win, COLOR_PAIR(color_pair));
 
   if (is_wide) {
-    s_mvwaddch(win, row + (offset * 2), col + offset,       wrepr[0]); // times 2 because rows are not scaled
-    s_mvwaddch(win, row + (offset * 2), col + offset + 0.5, wrepr[1]); // the 0.5 gets becomes 1 because cols are scaled
+    s_mvwaddch(win, row + offset * 2, col + offset,       wrepr[0]); // times 2 because rows are not scaled
+    s_mvwaddch(win, row + offset * 2, col + offset + 0.5, wrepr[1]); // the 0.5 gets becomes 1 because cols are scaled
   }
   else {
-    s_mvwaddstr(win, row, col, nrepr);
+    s_mvwaddstr(win, row + offset * 2, col + offset, nrepr);
   }
 
   wattroff(win, COLOR_PAIR(color_pair));

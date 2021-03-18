@@ -23,19 +23,25 @@ int World::load_chunk(int chunk_id) {
   return 0;
 }
 
-void World::draw(WINDOW *win, long x, long y, bool should_offset) {
+void World::draw(WINDOW *win, long x, long y, int at_x, int at_y, bool should_offset) {
   int rows, cols;
   getmaxyx(win, rows, cols);
 
+  // for (int row = 0; row < (should_offset ? rows - 2 : rows); ++row) {
+  //   for (int col = 0; col < (should_offset ? (cols - 2) / 2 : cols); ++col) {
+  //     plane.get_data(x + col, y + row).draw(win, row, col, should_offset);
+  //   }
+  // }
+
   for (int row = 0; row < (should_offset ? rows - 2 : rows); ++row) {
     for (int col = 0; col < (should_offset ? (cols - 2) / 2 : cols); ++col) {
-      plane.get_data(x + col, y + row).draw(win, row, col, should_offset);
+      plane.get_data(x + at_x + col, y + at_y + row).draw(win, row, col, should_offset);
     }
   }
 }
 
-void World::draw(WINDOW *win, Coords coords, bool should_offset) {
-  draw(win, coords.x, coords.y, should_offset);
+void World::draw(WINDOW *win, Coords coords, int at_x, int at_y, bool should_offset) {
+  draw(win, coords.x, coords.y, at_x, at_y, should_offset);
 }
 
 void World::generate() {

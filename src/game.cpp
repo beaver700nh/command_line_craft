@@ -97,7 +97,7 @@ void output() {
   // world.plane.d_print(debugwin, 1, 32);
   d_print_maxwin(debugwin, 1, 32, gamewin);
 
-  world.draw(gamewin, -GW_CTRX - coords.x, -GW_CTRY - coords.y, true);
+  world.draw(gamewin, coords.x, coords.y, GW_CTRX, GW_CTRY, true);
 
   player.draw(gamewin, GW_CTRY - 2, GW_CTRX - 2, true);
 
