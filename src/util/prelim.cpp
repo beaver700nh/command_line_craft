@@ -21,4 +21,5 @@ void curses_init_win(WINDOW *win) {
 
 void curses_init_pairs() {
   init_pair(Colors::win_brdr.cp, Colors::win_brdr.fg, Colors::win_brdr.bg);
+  init_pair(Colors::btn_hghl.cp, Colors::btn_hghl.fg, Colors::btn_hghl.bg);
 }

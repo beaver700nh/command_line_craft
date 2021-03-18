@@ -10,6 +10,7 @@ struct ColorData {
 namespace Colors {
   extern ColorData dirt;
   extern ColorData win_brdr;
+  extern ColorData btn_hghl;
 };
 
 #endif

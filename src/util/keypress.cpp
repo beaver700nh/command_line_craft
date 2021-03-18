@@ -23,6 +23,21 @@ int handle_keypress(int ch) {
   else if (ch == 'e') { // TEMPORARY
     return ActionInteract::sleep;
   }
+  else if (ch == KEY_UP) { // TEMPORARY
+    return ActionSelect::sel_up;
+  }
+  else if (ch == KEY_DOWN) { // TEMPORARY
+    return ActionSelect::sel_down;
+  }
+  else if (ch == KEY_LEFT) { // TEMPORARY
+    return ActionSelect::sel_left;
+  }
+  else if (ch == KEY_RIGHT) { // TEMPORARY
+    return ActionSelect::sel_right;
+  }
+  else if (ch == '\n') { // TEMPORARY
+    return ActionSelect::sel_ok;
+  }
   else {
     return ActionMisc::other;
   }

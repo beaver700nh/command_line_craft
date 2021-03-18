@@ -59,4 +59,6 @@ class Item {
     WINDOW *win;
 };
 
+void draw_box(WINDOW *win, int r, int c, int w, int h);
+
 #endif

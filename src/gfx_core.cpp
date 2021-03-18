@@ -53,8 +53,8 @@ void Unit::draw(WINDOW *win, int row, int col, bool should_offset) {
   wattron(win, COLOR_PAIR(color_pair));
 
   if (is_wide) {
-    s_mvwaddch(win, row + offset * 2, col + offset,       wrepr[0]); // times 2 because rows are not scaled
-    s_mvwaddch(win, row + offset * 2, col + offset + 0.5, wrepr[1]); // the 0.5 gets becomes 1 because cols are scaled
+    s_mvwaddch(win, row + offset * 2, col + offset,       wrepr[0]); // 0.5 * 2 = 1
+    s_mvwaddch(win, row + offset * 2, col + offset + 0.5, wrepr[1]); // 0.5 becomes 1 bc cols are scaled
   }
   else {
     s_mvwaddstr(win, row + offset * 2, col + offset, nrepr);
@@ -125,4 +125,16 @@ void Item::move(int rows, int cols) {
   if (rows != 0 || cols != 0) {
     updated = true;
   }
+}
+
+void draw_box(WINDOW *win, int r, int c, int w, int h) {
+  mvwaddch(win, r,     c,     ACS_ULCORNER);
+  mvwaddch(win, r,     c+w-1, ACS_URCORNER);
+  mvwaddch(win, r+h-1, c,     ACS_LLCORNER);
+  mvwaddch(win, r+h-1, c+w-1, ACS_LRCORNER);
+
+  mvwhline(win, r,     c+1,   ACS_HLINE, w-2);
+  mvwhline(win, r+h-1, c+1,   ACS_HLINE, w-2);
+  mvwvline(win, r+1,   c,     ACS_VLINE, h-2);
+  mvwvline(win, r+1,   c+w-1, ACS_VLINE, h-2);
 }

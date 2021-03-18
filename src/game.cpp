@@ -19,12 +19,16 @@
 #define US_PER_SEC 1000000
 #define TARGET_FPS 30
 
+AppState st = MM_PLAY;
+
 Coords coords;
 Player player;
 World  world;
 
 WINDOW *gamewin;
 WINDOW *debugwin;
+
+chtype default_bkgd;
 
 int GW_ROWS, GW_COLS, GW_CTRY, GW_CTRX, GW_CTRR, GW_CTRC;
 
@@ -37,7 +41,7 @@ void init() {
   );
 
   world = World(3);
-  world.plane.set_data(5, 5, Unit("%%", 0));
+  world.plane.set_data(0, 0, Unit("%%", 0));
 
   gamewin = newwin(26, 50, 5, 9);
   getmaxyx(gamewin, GW_ROWS, GW_COLS);
@@ -52,6 +56,24 @@ void init() {
   curses_init_win(debugwin);
 
   curses_init_pairs();
+
+  default_bkgd = getbkgd(gamewin);
+  wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
+}
+
+int tick() {
+  using namespace std::this_thread;
+  using namespace std::chrono;
+
+  auto next_tick = steady_clock::now() + microseconds(US_PER_SEC / TARGET_FPS);
+
+	int retval = input();
+
+	output();
+
+	sleep_until(next_tick);
+
+  return retval;
 }
 
 int input() {
@@ -76,6 +98,40 @@ int input() {
   else if (result == ActionInteract::sleep) {
     player.standing = !player.standing;
   }
+  else if (result == ActionSelect::sel_up) {
+    if (st == MM_PLAY) {
+      st = MM_QUIT;
+    }
+    else if (st == MM_QUIT) {
+      st = MM_OPTIONS;
+    }
+    else if (st == MM_OPTIONS) {
+      st = MM_PLAY;
+    }
+  }
+  else if (result == ActionSelect::sel_down) {
+    if (st == MM_PLAY) {
+      st = MM_OPTIONS;
+    }
+    else if (st == MM_OPTIONS) {
+      st = MM_QUIT;
+    }
+    else if (st == MM_QUIT) {
+      st = MM_PLAY;
+    }
+  }
+  else if (result == ActionSelect::sel_ok) {
+    if (st == MM_PLAY) {
+      wbkgdset(gamewin, default_bkgd);
+      st = GAME;
+    }
+    else if (st == MM_OPTIONS) {
+      return -1;
+    }
+    else if (st == MM_QUIT) {
+      return -1;
+    }
+  }
   else {
     return -2;
   }
@@ -89,35 +145,49 @@ void output() {
 
 	dwborder(debugwin);
 
-  wattron(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
-	dwborder(gamewin);
-  wattroff(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
-
   coords.d_print(debugwin, 1, 3);
   // world.plane.d_print(debugwin, 1, 32);
   d_print_maxwin(debugwin, 1, 32, gamewin);
 
-  world.draw(gamewin, coords.x, coords.y, GW_CTRX, GW_CTRY, true);
+  wattron(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
+	dwborder(gamewin);
+  wattroff(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 
-  player.draw(gamewin, GW_CTRY - 2, GW_CTRX - 2, true);
+  if (st == GAME) {
+    draw_game();
+  }
+  else if (st == MM_PLAY || st == MM_OPTIONS || st == MM_QUIT) {
+    draw_main_menu(st);
+  }
 
   wrefresh(gamewin);
 	wrefresh(debugwin);
 }
 
-int tick() {
-  using namespace std::this_thread;
-  using namespace std::chrono;
+void draw_game() {
+  world.draw(gamewin, coords.x, coords.y, GW_CTRX, GW_CTRY, true);
+  player.draw(gamewin, GW_CTRY - 2, GW_CTRX - 2, true);
+}
 
-  auto next_tick = steady_clock::now() + microseconds(US_PER_SEC / TARGET_FPS);
+void draw_main_menu(AppState selected) {
+  int btn_width = 16;
+  int top_btn_y = 10;
 
-	int retval = input();
+  selected == MM_PLAY && wattron(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
+  draw_box(gamewin, top_btn_y,   GW_CTRC - btn_width/2 - 1, btn_width, 3);
+  mvwaddstr(gamewin, top_btn_y+1, GW_CTRC - btn_width/2, "     Play     ");
+  selected == MM_PLAY && wattroff(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
 
-	output();
+  selected == MM_OPTIONS && wattron(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
+  draw_box(gamewin, top_btn_y+4, GW_CTRC - btn_width/2 - 1, btn_width, 3);
+  mvwaddstr(gamewin, top_btn_y+5, GW_CTRC - btn_width/2, "    Options   ");
+  selected == MM_OPTIONS && wattroff(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
 
-	sleep_until(next_tick);
-
-  return retval;
+  selected == MM_QUIT && wattron(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
+  draw_box(gamewin, top_btn_y+8, GW_CTRC - btn_width/2 - 1, btn_width, 3);
+  draw_box(gamewin, top_btn_y+8, GW_CTRC - btn_width/2 - 1, btn_width, 3);
+  mvwaddstr(gamewin, top_btn_y+9, GW_CTRC - btn_width/2, "     Quit     ");
+  selected == MM_QUIT && wattroff(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
 }
 
 void end() {
