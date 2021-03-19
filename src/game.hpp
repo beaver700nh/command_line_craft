@@ -1,9 +1,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-//#define fill_constants(rows, cols, ctrr, ctrc, ctrx, ctry) (ctrr = rows/2, ctrc = cols/2, ctry = ctrr, ctrx = ctrc/2);
-
-typedef enum {MAIN_MENU, MM_PLAY, MM_OPTIONS, MM_QUIT, GAME} AppState;
+typedef enum {MAIN_MENU, GAME, OPTIONS} AppState;
 
 void init();
 
@@ -13,7 +11,8 @@ int input();
 void output();
 
 void draw_game();
-void draw_main_menu(int hghl_btn);
+void draw_main_menu(int cur_btn);
+void draw_options(int cur_btn);
 
 void end();
 

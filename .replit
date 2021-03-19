@@ -1,1 +1,1 @@
-run="build/compile.sh"
+run="build/run.sh"

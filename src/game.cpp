@@ -110,7 +110,7 @@ int input() {
       st = GAME;
     }
     else if (cur_btn == 1) {
-      return -1;
+      st = OPTIONS;
     }
     else if (cur_btn == 2) {
       return -1;
@@ -143,6 +143,10 @@ void output() {
   else if (st == MAIN_MENU) {
     draw_main_menu(cur_btn);
   }
+  else if (st == OPTIONS) {
+    cur_btn = 1;
+    draw_options(cur_btn);
+  }
 
   wrefresh(gamewin);
 	wrefresh(debugwin);
@@ -159,9 +163,35 @@ void draw_main_menu(int cur_btn) {
   int top_btn_y = 10;
   int all_btn_x = GW_CTRC - btn_width/2 - 1;
 
-  draw_btn(gamewin, top_btn_y,   all_btn_x, btn_width, btn_height, 1, 1, "     Play     ", cur_btn == 0);
-  draw_btn(gamewin, top_btn_y+4, all_btn_x, btn_width, btn_height, 1, 1, "    Options   ", cur_btn == 1);
-  draw_btn(gamewin, top_btn_y+8, all_btn_x, btn_width, btn_height, 1, 1, "     Quit     ", cur_btn == 2);
+  draw_btn(gamewin, top_btn_y,   all_btn_x, btn_width, btn_height, 1, 1, btn_labels[0][0], cur_btn == 0);
+  draw_btn(gamewin, top_btn_y+4, all_btn_x, btn_width, btn_height, 1, 1, btn_labels[0][1], cur_btn == 1);
+  draw_btn(gamewin, top_btn_y+8, all_btn_x, btn_width, btn_height, 1, 1, btn_labels[0][2], cur_btn == 2);
+}
+
+void draw_options(int cur_btn) {
+  /*
+   * +--------------------+--------------------+
+   * |     Music: xx%     | Sound Effects: xx% |
+   * +--------------------+--------------------+
+   * |  Invert Mouse: xxx | Difficulty: xxxxxx |
+   * +--------------------+--------------------+
+   * |         TBD        |     Controls...    |
+   * +--------------------+--------------------+
+   * |   Texture Packs... |     Recipes...     |
+   * +--------------------+--------------------+
+   * |    Color Packs...  |      Items...      |
+   * +--------------------+--------------------+
+   *
+   */
+
+  int btn_width = 20;
+  int btn_height = 3;
+  int top_btn_y = 10;
+  int all_btn_x = GW_CTRC - btn_width/2 - 1;
+
+  draw_btn(gamewin, top_btn_y,   all_btn_x, btn_width, btn_height, 1, 1, btn_labels[1][0], cur_btn == 0);
+  draw_btn(gamewin, top_btn_y+4, all_btn_x, btn_width, btn_height, 1, 1, btn_labels[1][1], cur_btn == 1);
+  draw_btn(gamewin, top_btn_y+8, all_btn_x, btn_width, btn_height, 1, 1, btn_labels[1][2], cur_btn == 2);
 }
 
 void end() {

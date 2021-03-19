@@ -4,10 +4,19 @@
 
 #include "button.hpp"
 
-const char btn_labels[][15] = {
-  "     Play     ",
-  "    Options   ",
-  "     Quit     ",
+const char btn_labels[][50][15] = {
+  /* main menu */
+  {
+    "     Play     ",
+    "    Options   ",
+    "     Quit     ",
+  },
+  /* options main */
+  {
+    "     test1    ",
+    "     test2    ",
+    "     test3    ",
+  },
 };
 
 int get_prev_btn(int cur_btn, AppState st) {

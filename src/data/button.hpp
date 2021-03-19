@@ -3,7 +3,7 @@
 
 #include "../game.hpp"
 
-extern const char btn_labels[][15];
+extern const char btn_labels[][50][15];
 
 int get_prev_btn(int cur_btn, AppState st);
 int get_next_btn(int cur_btn, AppState st);
