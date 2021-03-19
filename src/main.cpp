@@ -9,11 +9,7 @@ int main() {
 
   init();
 
-  while (true) {
-    if (tick() == -1) {
-      break;
-    }
-  }
+  while (tick() != -1);
 
   end();
 

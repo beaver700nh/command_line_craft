@@ -6,6 +6,7 @@
 #include "world.hpp"
 
 #include "data/blocks.hpp"
+#include "data/colors.hpp"
 
 /*************** World ***************/
 
@@ -22,21 +23,27 @@ int World::load_chunk(int chunk_id) {
   return 0;
 }
 
-void World::draw(WINDOW *win, long x, long y) {
+void World::draw(WINDOW *win, long x, long y, int at_x, int at_y, bool should_offset) {
   int rows, cols;
   getmaxyx(win, rows, cols);
 
-  for (int row = 0; row < rows; ++row) {
-    for (int col = 0; col < cols; ++col) {
-      plane.get_data(x + col, y + row).draw(win, row, col);
+  // for (int row = 0; row < (should_offset ? rows - 2 : rows); ++row) {
+  //   for (int col = 0; col < (should_offset ? (cols - 2) / 2 : cols); ++col) {
+  //     plane.get_data(x + col, y + row).draw(win, row, col, should_offset);
+  //   }
+  // }
+
+  for (int row = 0; row < (should_offset ? rows - 2 : rows); ++row) {
+    for (int col = 0; col < (should_offset ? (cols - 2) / 2 : cols); ++col) {
+      plane.get_data(x + at_x + col, y + at_y + row).draw(win, row, col, should_offset);
     }
   }
 }
 
-void World::draw(WINDOW *win, Coords coords) {
-  draw(win, coords.x, coords.y);
+void World::draw(WINDOW *win, Coords coords, int at_x, int at_y, bool should_offset) {
+  draw(win, coords.x, coords.y, at_x, at_y, should_offset);
 }
 
 void World::generate() {
-  plane = Plane<Unit>(Unit(Blocks::dirt.repr, 0), CHUNK_WIDTH * chunk_radius, 256);
+  plane = Plane<Unit>(Unit(Blocks::dirt.repr, Colors::dirt.cp, Colors::dirt.fg, Colors::dirt.bg), CHUNK_WIDTH * chunk_radius, 256);
 }

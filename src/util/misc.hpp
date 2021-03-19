@@ -3,7 +3,9 @@
 
 #include <ncurses.h>
 
-#define dwborder(win) wborder(win, 0, 0, 0, 0, 0, 0, 0, 0)
+#define fill_constants(rows, cols, ctrr, ctrc, ctrx, ctry) (ctrr = rows/2, ctrc = cols/2, ctry = ctrr, ctrx = ctrc/2)
+
+#define dwborder(win) box(win, 0, 0)
 
 class Coords {
   public:

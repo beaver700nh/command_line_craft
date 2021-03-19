@@ -15,7 +15,8 @@ class Player {
   public:
     Player();
     Player(Unit up1, Unit up2, Unit dn1, Unit dn2);
-    void draw(WINDOW *win, int row, int col);
+
+    void draw(WINDOW *win, int row, int col, bool should_offset = false);
 
     bool standing = true;
 

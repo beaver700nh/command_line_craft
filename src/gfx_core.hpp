@@ -26,7 +26,10 @@ class Unit {
     Unit(const char *repr, int color_pair);
     Unit(const char *repr, int color_pair, int fg, int bg);
 
-    void draw(WINDOW *win, int row, int col);
+    void ctor_helper(const chtype *repr, int color_pair);
+    void ctor_helper(const char *repr, int color_pair);
+
+    void draw(WINDOW *win, int row, int col, bool should_offset = false);
 
     bool is_wide;
     char nrepr[3];

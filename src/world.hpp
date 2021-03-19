@@ -19,8 +19,8 @@ class World {
 
     int load_chunk(int chunk_id);
 
-    void draw(WINDOW *win, long x, long y);
-    void draw(WINDOW *win, Coords coords);
+    void draw(WINDOW *win, long x, long y, int at_x, int at_y, bool has_border = false);
+    void draw(WINDOW *win, Coords coords, int at_x, int at_y, bool has_border = false);
 
     static constexpr int ERR_COORDS_OOB = -1;
 

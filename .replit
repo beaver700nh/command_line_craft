@@ -1,1 +1,1 @@
-run="/bin/bash build/shellnote.sh"
+run="build/run.sh"
