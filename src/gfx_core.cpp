@@ -6,6 +6,8 @@
 
 #include "world.hpp"
 #include "gfx_core.hpp"
+#include "data/colors.hpp"
+#include "util/misc.hpp"
 
 /*************** Unit ***************/
 
@@ -125,16 +127,4 @@ void Item::move(int rows, int cols) {
   if (rows != 0 || cols != 0) {
     updated = true;
   }
-}
-
-void draw_box(WINDOW *win, int r, int c, int w, int h) {
-  mvwaddch(win, r,     c,     ACS_ULCORNER);
-  mvwaddch(win, r,     c+w-1, ACS_URCORNER);
-  mvwaddch(win, r+h-1, c,     ACS_LLCORNER);
-  mvwaddch(win, r+h-1, c+w-1, ACS_LRCORNER);
-
-  mvwhline(win, r,     c+1,   ACS_HLINE, w-2);
-  mvwhline(win, r+h-1, c+1,   ACS_HLINE, w-2);
-  mvwvline(win, r+1,   c,     ACS_VLINE, h-2);
-  mvwvline(win, r+1,   c+w-1, ACS_VLINE, h-2);
 }

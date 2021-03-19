@@ -10,16 +10,19 @@
 #include "util/debug_print.hpp"
 #include "util/keypress.hpp"
 #include "util/prelim.hpp"
+#include "util/misc.hpp"
 
 #include "data/blocks.hpp"
 #include "data/colors.hpp"
+#include "data/button.hpp"
 
 #define ESC 27
 
 #define US_PER_SEC 1000000
 #define TARGET_FPS 30
 
-AppState st = MM_PLAY;
+AppState st = MAIN_MENU;
+int cur_btn = 0;
 
 Coords coords;
 Player player;
@@ -45,10 +48,7 @@ void init() {
 
   gamewin = newwin(26, 50, 5, 9);
   getmaxyx(gamewin, GW_ROWS, GW_COLS);
-  GW_CTRR = GW_ROWS/2;
-  GW_CTRC = GW_COLS/2;
-  GW_CTRY = GW_CTRR;
-  GW_CTRX = GW_CTRC/2;
+  fill_constants(GW_ROWS, GW_COLS, GW_CTRR, GW_CTRC, GW_CTRX, GW_CTRY);
 
   debugwin = newwin(4, 52, 0, 8);
 
@@ -99,36 +99,20 @@ int input() {
     player.standing = !player.standing;
   }
   else if (result == ActionSelect::sel_up) {
-    if (st == MM_PLAY) {
-      st = MM_QUIT;
-    }
-    else if (st == MM_QUIT) {
-      st = MM_OPTIONS;
-    }
-    else if (st == MM_OPTIONS) {
-      st = MM_PLAY;
-    }
+    cur_btn = get_prev_btn(cur_btn, st);
   }
   else if (result == ActionSelect::sel_down) {
-    if (st == MM_PLAY) {
-      st = MM_OPTIONS;
-    }
-    else if (st == MM_OPTIONS) {
-      st = MM_QUIT;
-    }
-    else if (st == MM_QUIT) {
-      st = MM_PLAY;
-    }
+    cur_btn = get_next_btn(cur_btn, st);
   }
   else if (result == ActionSelect::sel_ok) {
-    if (st == MM_PLAY) {
+    if (cur_btn == 0) {
       wbkgdset(gamewin, default_bkgd);
       st = GAME;
     }
-    else if (st == MM_OPTIONS) {
+    else if (cur_btn == 1) {
       return -1;
     }
-    else if (st == MM_QUIT) {
+    else if (cur_btn == 2) {
       return -1;
     }
   }
@@ -156,8 +140,8 @@ void output() {
   if (st == GAME) {
     draw_game();
   }
-  else if (st == MM_PLAY || st == MM_OPTIONS || st == MM_QUIT) {
-    draw_main_menu(st);
+  else if (st == MAIN_MENU) {
+    draw_main_menu(cur_btn);
   }
 
   wrefresh(gamewin);
@@ -169,25 +153,15 @@ void draw_game() {
   player.draw(gamewin, GW_CTRY - 2, GW_CTRX - 2, true);
 }
 
-void draw_main_menu(AppState selected) {
+void draw_main_menu(int cur_btn) {
   int btn_width = 16;
+  int btn_height = 3;
   int top_btn_y = 10;
+  int all_btn_x = GW_CTRC - btn_width/2 - 1;
 
-  selected == MM_PLAY && wattron(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
-  draw_box(gamewin, top_btn_y,   GW_CTRC - btn_width/2 - 1, btn_width, 3);
-  mvwaddstr(gamewin, top_btn_y+1, GW_CTRC - btn_width/2, "     Play     ");
-  selected == MM_PLAY && wattroff(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
-
-  selected == MM_OPTIONS && wattron(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
-  draw_box(gamewin, top_btn_y+4, GW_CTRC - btn_width/2 - 1, btn_width, 3);
-  mvwaddstr(gamewin, top_btn_y+5, GW_CTRC - btn_width/2, "    Options   ");
-  selected == MM_OPTIONS && wattroff(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
-
-  selected == MM_QUIT && wattron(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
-  draw_box(gamewin, top_btn_y+8, GW_CTRC - btn_width/2 - 1, btn_width, 3);
-  draw_box(gamewin, top_btn_y+8, GW_CTRC - btn_width/2 - 1, btn_width, 3);
-  mvwaddstr(gamewin, top_btn_y+9, GW_CTRC - btn_width/2, "     Quit     ");
-  selected == MM_QUIT && wattroff(gamewin, COLOR_PAIR(Colors::btn_hghl.cp));
+  draw_btn(gamewin, top_btn_y,   all_btn_x, btn_width, btn_height, 1, 1, "     Play     ", cur_btn == 0);
+  draw_btn(gamewin, top_btn_y+4, all_btn_x, btn_width, btn_height, 1, 1, "    Options   ", cur_btn == 1);
+  draw_btn(gamewin, top_btn_y+8, all_btn_x, btn_width, btn_height, 1, 1, "     Quit     ", cur_btn == 2);
 }
 
 void end() {

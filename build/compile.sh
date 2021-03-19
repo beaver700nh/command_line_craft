@@ -10,13 +10,13 @@ fi
 
 function execute() {
   echo -e "\x1b[32m================ Executing (Main Program) ... ================\x1b[0m"
-  sleep 2
+  sleep 1
   ./build/main
 }
 
 function execute_color_test() {
   echo -e "\x1b[32m================ Executing (Color Test) ... ================\x1b[0m"
-  sleep 2
+  sleep 1
   ./build/colortest
 }
 
