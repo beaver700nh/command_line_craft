@@ -99,21 +99,36 @@ int input() {
     player.standing = !player.standing;
   }
   else if (result == ActionSelect::sel_up) {
-    cur_btn = get_prev_btn(cur_btn, st);
+    cur_btn = get_up_btn(cur_btn, st);
   }
   else if (result == ActionSelect::sel_down) {
-    cur_btn = get_next_btn(cur_btn, st);
+    cur_btn = get_down_btn(cur_btn, st);
+  }
+  else if (result == ActionSelect::sel_left) {
+    cur_btn = get_left_btn(cur_btn, st);
+  }
+  else if (result == ActionSelect::sel_right) {
+    cur_btn = get_right_btn(cur_btn, st);
   }
   else if (result == ActionSelect::sel_ok) {
-    if (cur_btn == 0) {
-      wbkgdset(gamewin, default_bkgd);
-      st = GAME;
+    if (st == MAIN_MENU) {
+      if (cur_btn == 0) {
+        wbkgdset(gamewin, default_bkgd);
+        st = GAME;
+      }
+      else if (cur_btn == 1) {
+        cur_btn = 0;
+        st = OPTIONS;
+      }
+      else if (cur_btn == 2) {
+        return -1;
+      }
     }
-    else if (cur_btn == 1) {
-      st = OPTIONS;
-    }
-    else if (cur_btn == 2) {
-      return -1;
+    else if (st == OPTIONS) {
+      if (cur_btn == 10) {
+        cur_btn = 0;
+        st = MAIN_MENU;
+      }
     }
   }
   else {
@@ -144,7 +159,6 @@ void output() {
     draw_main_menu(cur_btn);
   }
   else if (st == OPTIONS) {
-    cur_btn = 1;
     draw_options(cur_btn);
   }
 
@@ -160,38 +174,42 @@ void draw_game() {
 void draw_main_menu(int cur_btn) {
   int btn_width = 16;
   int btn_height = 3;
-  int top_btn_y = 10;
-  int all_btn_x = GW_CTRC - btn_width/2 - 1;
+  int top  = 10;
+  int left = GW_CTRC - btn_width/2 - 1;
 
-  draw_btn(gamewin, top_btn_y,   all_btn_x, btn_width, btn_height, 1, 1, btn_labels[0][0], cur_btn == 0);
-  draw_btn(gamewin, top_btn_y+4, all_btn_x, btn_width, btn_height, 1, 1, btn_labels[0][1], cur_btn == 1);
-  draw_btn(gamewin, top_btn_y+8, all_btn_x, btn_width, btn_height, 1, 1, btn_labels[0][2], cur_btn == 2);
+  for (int btn_no = 0; btn_no < 3; ++btn_no) {
+    draw_btn(
+      gamewin, top + (btn_height+1) * btn_no, left, btn_width, btn_height,
+      1, 1, btn_labels[0][btn_no], cur_btn == btn_no
+    );
+  }
 }
 
 void draw_options(int cur_btn) {
-  /*
-   * +--------------------+--------------------+
-   * |     Music: xx%     | Sound Effects: xx% |
-   * +--------------------+--------------------+
-   * |  Invert Mouse: xxx | Difficulty: xxxxxx |
-   * +--------------------+--------------------+
-   * |         TBD        |     Controls...    |
-   * +--------------------+--------------------+
-   * |   Texture Packs... |     Recipes...     |
-   * +--------------------+--------------------+
-   * |    Color Packs...  |      Items...      |
-   * +--------------------+--------------------+
-   *
-   */
-
-  int btn_width = 20;
+  int btn_width = 22;
   int btn_height = 3;
-  int top_btn_y = 10;
-  int all_btn_x = GW_CTRC - btn_width/2 - 1;
+  int top  = 7;
+  int left = GW_CTRC - btn_width - 1;
 
-  draw_btn(gamewin, top_btn_y,   all_btn_x, btn_width, btn_height, 1, 1, btn_labels[1][0], cur_btn == 0);
-  draw_btn(gamewin, top_btn_y+4, all_btn_x, btn_width, btn_height, 1, 1, btn_labels[1][1], cur_btn == 1);
-  draw_btn(gamewin, top_btn_y+8, all_btn_x, btn_width, btn_height, 1, 1, btn_labels[1][2], cur_btn == 2);
+  for (int btn_no = 0; btn_no < 10; ++btn_no) {
+    if (btn_no % 2 == 0) { // left column
+      draw_btn(
+        gamewin, top + btn_height * (btn_no / 2), left, btn_width, btn_height,
+        1, 1, btn_labels[1][btn_no], cur_btn == btn_no
+      );
+    }
+    else { // right column
+      draw_btn(
+        gamewin, top + btn_height * (btn_no / 2), GW_CTRC + 1, btn_width, btn_height,
+        1, 1, btn_labels[1][btn_no], cur_btn == btn_no
+      );
+    }
+  }
+
+  draw_btn( // "back" button (at bottom)
+    gamewin, top + btn_height * 5, GW_CTRC - btn_width/2 - 1, btn_width, btn_height,
+    1, 1, btn_labels[1][10], cur_btn == 10
+  );
 }
 
 void end() {
