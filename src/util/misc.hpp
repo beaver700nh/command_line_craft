@@ -13,4 +13,7 @@ class Coords {
     void d_print(WINDOW *win, int row, int col);
 };
 
+void unicode_to_chtype(const char *bytes, chtype *decoded);
+chtype decode_lookup(char b);
+
 #endif

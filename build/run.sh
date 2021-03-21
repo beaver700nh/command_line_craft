@@ -4,7 +4,7 @@ ACTION_OPT=$1
 VERBOSE_OPT=$2
 
 if [ $# -lt 1 ]; then
-  read -p "Action? [c/e/o] " ACTION_OPT
+  read -p "Action? [c/e/t] " ACTION_OPT
 
 fi
 
@@ -14,10 +14,10 @@ function execute() {
   ./build/main
 }
 
-function execute_color_test() {
-  echo -e "\x1b[32m================ Executing (Color Test) ... ================\x1b[0m"
+function execute_test() {
+  echo -e "\x1b[32m================ Executing (Test) ... ================\x1b[0m"
   sleep 1
-  ./build/colortest
+  ./build/test
 }
 
 function compile() {
@@ -25,8 +25,8 @@ function compile() {
   result=$?
 }
 
-function compile_color_test() {
-  clang++-7 -pthread -std=c++17 -o build/colortest -lncurses tests/colortest.cpp $1
+function compile_test() {
+  clang++-7 -pthread -std=c++17 -o build/test -lncurses $2 $1
   result=$?
 }
 
@@ -59,18 +59,24 @@ elif [[ "$ACTION_OPT" == "E" ]]; then
 elif [[ "$ACTION_OPT" == "e" ]]; then
   execute
 
-elif [[ "$ACTION_OPT" == "O" ]]; then
-  echo -e "\x1b[32m================ Compiling (Color Test) ... ================\x1b[0m"
+elif [[ "$ACTION_OPT" == "T" ]]; then
+  read -p "Which test? " the_test
+  read -p "What links? " the_links
 
-  compile_color_test $VERBOSE_OPT
+  echo -e "\x1b[32m================ Compiling ($the_test) ... ================\x1b[0m"
+
+  compile_test $VERBOSE_OPT "tests/$the_test" $the_links
 
   if [ "$result" -eq 0 ]; then
-    execute_color_test
+    execute_test
+
+  else
+    echo -e "\x1b[31mFailed! (Test)\x1b[0m"
 
   fi
 
-elif [[ "$ACTION_OPT" == "o" ]]; then
-  execute_color_test
+elif [[ "$ACTION_OPT" == "t" ]]; then
+  execute_test
 
 else
   echo -e "\x1b[31mNo such action: $ACTION_OPT\x1b[0m"

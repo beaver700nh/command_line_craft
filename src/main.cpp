@@ -7,11 +7,24 @@
 int main() {
   atexit(end);
 
-  init();
+  int result = init();
 
-  while (tick() != -1);
+  if (result == 0) {
+    while (tick() != -1);
+  }
+  else {
+    end();
 
-  end();
+    if (result == -1) {
+      std::cout << "main.cpp: error: Terminal does not support colors.\n";
+    }
+    else if (result == -2) {
+      std::cout << "main.cpp: error: Unable to start colors.\n";
+    }
+    else {
+      std::cout << "main.cpp: error: Unknown error happened.\n";
+    }
+  }
 
   return 0;
 }
