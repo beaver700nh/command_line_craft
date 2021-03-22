@@ -3,6 +3,7 @@
 #include <cstring>
 #include <fstream>
 #include <ncurses.h>
+#include <random>
 #include <string>
 #include <thread>
 
@@ -39,6 +40,11 @@ chtype default_bkgd;
 
 int GW_ROWS, GW_COLS, GW_CTRY, GW_CTRX, GW_CTRR, GW_CTRC;
 
+std::random_device rand_dev;
+std::mt19937 rng(rand_dev());
+
+char logo_path[100];
+
 int init() {
   int result = curses_init_seq();
   if (result != 0) {
@@ -66,6 +72,24 @@ int init() {
 
   default_bkgd = getbkgd(gamewin);
   wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
+
+  int logo_easter = get_rand_num(0, 4, rng);
+
+  if (logo_easter == 0) {
+    strcpy(logo_path, CLC_APPDATA "asciiart/logo.txt");
+  }
+  else if (logo_easter == 1) {
+    strcpy(logo_path, CLC_APPDATA "asciiart/logo_alt_a.txt");
+  }
+  else if (logo_easter == 2) {
+    strcpy(logo_path, CLC_APPDATA "asciiart/logo_alt_b.txt");
+  }
+  else if (logo_easter == 3) {
+    strcpy(logo_path, CLC_APPDATA "asciiart/logo_alt_c.txt");
+  }
+  else {
+    return -3; // Illegal random number
+  }
 
   return 0;
 }
@@ -179,7 +203,7 @@ void draw_game() {
 }
 
 void draw_main_menu(int cur_btn) {
-  draw_txt(gamewin, 2, 4, "/home/runner/commandlinecraft/src/data/asciiart/logo.txt", COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
+  draw_txt(gamewin, 2, 4, logo_path, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
 
   int btn_width = 16;
   int btn_height = 3;
@@ -195,7 +219,7 @@ void draw_main_menu(int cur_btn) {
 }
 
 void draw_options(int cur_btn) {
-  draw_txt(gamewin, 2, 13, "/home/runner/commandlinecraft/src/data/asciiart/options.txt", COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
+  draw_txt(gamewin, 2, 13, CLC_APPDATA "asciiart/options.txt", COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
 
   int btn_width = 22;
   int btn_height = 3;
@@ -221,41 +245,6 @@ void draw_options(int cur_btn) {
     gamewin, top + btn_height * 5, GW_CTRC - btn_width/2 - 1, btn_width, btn_height,
     1, 1, btn_labels[1][10], cur_btn == 10
   );
-}
-
-void draw_txt(WINDOW *win, int row, int col, const char *fname, int style) {
-  std::string line;
-  std::ifstream ifs(fname);
-
-  if (ifs.is_open()) {
-    for (int i = 0; std::getline(ifs, line); ++i) {
-      const char *temp = line.c_str();
-      char c_line[200];
-
-      int n = 0;
-
-      while (temp[n] != '\r' && temp[n] != '\n' && temp[n] != '\0') {
-        c_line[n] = temp[n];
-        ++n;
-      }
-
-      c_line[n] = '\0';
-
-      chtype d_line[50];
-      unicode_to_chtype(c_line, d_line);
-
-      for (int j = 0; d_line[j] != '\0'; ++j) {
-        mvwaddch(win, row + i, col + j, d_line[j] | style);
-      }
-    }
-  }
-  else {
-    char buf[50];
-    sprintf(buf, "Error: unable to open file %s", fname);
-    mvwaddstr(win, row, col, buf);
-  }
-
-  ifs.close();
 }
 
 void end() {

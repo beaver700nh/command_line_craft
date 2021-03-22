@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <cstring>
+#include <random>
 
 #include "misc.hpp"
 
@@ -52,4 +53,10 @@ chtype decode_lookup(char b) {
     case 0xB1: return ACS_PLMINUS;
     default:   return '?';
   }
+}
+
+int get_rand_num(int min, int outcomes, std::mt19937 rng) {
+  std::uniform_int_distribution<> dist(min, min + outcomes - 1);
+
+  return dist(rng);
 }

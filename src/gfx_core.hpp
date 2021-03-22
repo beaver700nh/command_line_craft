@@ -18,6 +18,10 @@
 #define LIQ_L   0x06
 #define LIQ_R   0x07
 
+void draw_txt(WINDOW *win, int row, int col, const char *fname, int style);
+void draw_box(WINDOW *win, int row, int col, int width, int height);
+void draw_btn(WINDOW *win, int row, int col, int width, int height, int text_row, int text_col, const char *text, bool hghl);
+
 class Unit {
   public:
     Unit();
