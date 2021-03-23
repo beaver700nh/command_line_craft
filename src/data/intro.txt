@@ -1,0 +1,24 @@
+^^^ That box is where
+achievements and challenges
+will pop up.
+
+\\\ The top left box shows
+stuff like your coords. More
+features will be added soon!
+
+<<< That is the main box. It
+contains the game. Use arrow
+keys to select and enter to
+confirm. Controls are mostly
+the same as in regular
+Minecraft.
+
+... This box is the chat. It
+will contain the changelog
+the next time Minhcraft is
+started up.
+
+!!! This guide can be
+accessed via the chat box
+by using the command
+"/starterguide".

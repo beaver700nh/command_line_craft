@@ -7,6 +7,7 @@
 #include <string>
 #include <thread>
 
+#include "chat.hpp"
 #include "game.hpp"
 #include "gfx_core.hpp"
 #include "player.hpp"
@@ -14,27 +15,30 @@
 
 #include "util/debug_print.hpp"
 #include "util/keypress.hpp"
-#include "util/prelim.hpp"
 #include "util/misc.hpp"
+#include "util/prelim.hpp"
 
 #include "data/blocks.hpp"
-#include "data/colors.hpp"
 #include "data/button.hpp"
+#include "data/colors.hpp"
+#include "data/constants.hpp"
 
 #define ESC 27
 
 #define US_PER_SEC 1000000
 #define TARGET_FPS 30
 
-AppState st = MAIN_MENU;
+AppState st = AppState::MAIN_MENU;
+FocusType fc = FocusType::MENU;
+
 int cur_btn = 0;
 
 Coords coords;
 Player player;
 World  world;
+Chat   chat;
 
-WINDOW *gamewin;
-WINDOW *debugwin;
+WINDOW *gamewin, *debugwin, *achvwin, *chatwin;
 
 chtype default_bkgd;
 
@@ -44,6 +48,7 @@ std::random_device rand_dev;
 std::mt19937 rng(rand_dev());
 
 char logo_path[100];
+char splash[50];
 
 int init() {
   int result = curses_init_seq();
@@ -58,12 +63,15 @@ int init() {
 
   world = World(3);
   world.plane.set_data(0, 0, Unit("%%", 0));
+  world.plane.set_data(22, 24, Unit("><", 0));
 
   gamewin = newwin(26, 50, 5, 9);
   getmaxyx(gamewin, GW_ROWS, GW_COLS);
   fill_constants(GW_ROWS, GW_COLS, GW_CTRR, GW_CTRC, GW_CTRX, GW_CTRY);
 
-  debugwin = newwin(4, 52, 0, 8);
+  debugwin = newwin(4,  52, 0, 8);
+  achvwin  = newwin(4,  30, 0, 61);
+  chatwin  = newwin(26, 30, 5, 61);
 
   curses_init_win(gamewin);
   curses_init_win(debugwin);
@@ -73,23 +81,11 @@ int init() {
   default_bkgd = getbkgd(gamewin);
   wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 
-  int logo_easter = get_rand_num(0, 4, rng);
+  int logo_success = set_logo(logo_path, rng);
+  if (logo_success != 0) return -3;
 
-  if (logo_easter == 0) {
-    strcpy(logo_path, CLC_APPDATA "asciiart/logo.txt");
-  }
-  else if (logo_easter == 1) {
-    strcpy(logo_path, CLC_APPDATA "asciiart/logo_alt_a.txt");
-  }
-  else if (logo_easter == 2) {
-    strcpy(logo_path, CLC_APPDATA "asciiart/logo_alt_b.txt");
-  }
-  else if (logo_easter == 3) {
-    strcpy(logo_path, CLC_APPDATA "asciiart/logo_alt_c.txt");
-  }
-  else {
-    return -3; // Illegal random number
-  }
+  int splash_success = set_splash(splash, rng);
+  if (splash_success != 0) return -4;
 
   return 0;
 }
@@ -110,7 +106,8 @@ int tick() {
 }
 
 int input() {
-  int result = handle_keypress(wgetch(gamewin));
+  int ch = wgetch(gamewin);
+  int result = handle_keypress(ch, st, fc);
 
   if (result == ActionMisc::quit) {
     return -1;
@@ -143,25 +140,49 @@ int input() {
     cur_btn = get_right_btn(cur_btn, st);
   }
   else if (result == ActionSelect::sel_ok) {
-    if (st == MAIN_MENU) {
+    if (st == AppState::MAIN_MENU) {
       if (cur_btn == 0) {
         wbkgdset(gamewin, default_bkgd);
-        st = GAME;
+        st = AppState::GAME;
+        fc = FocusType::GAME;
       }
       else if (cur_btn == 1) {
         cur_btn = 0;
-        st = OPTIONS;
+        st = AppState::OPTIONS;
+        fc = FocusType::MENU;
       }
       else if (cur_btn == 2) {
         return -1;
       }
     }
-    else if (st == OPTIONS) {
+    else if (st == AppState::OPTIONS) {
       if (cur_btn == 10) {
         cur_btn = 0;
-        st = MAIN_MENU;
+        st = AppState::MAIN_MENU;
+        fc = FocusType::MENU;
       }
     }
+  }
+  else if (result == ActionChat::focus) {
+    fc = FocusType::CHAT;
+  }
+  else if (result == ActionChat::cmd) {
+    fc = FocusType::CHAT;
+    chat.i_am_typing("/");
+  }
+  else if (result == ActionChat::send) {
+    chat.i_am_typing("");
+  }
+  else if (result == ActionChat::unfcs) {
+    fc = FocusType::GAME;
+  }
+  else if (result == ActionMisc::other) {
+    if (fc == FocusType::CHAT) {
+      chat.i_am_typing_more("hi");
+    }
+  }
+  else if (result == ActionMisc::idle) {
+    return 0;
   }
   else {
     return -2;
@@ -173,28 +194,37 @@ int input() {
 void output() {
 	werase(gamewin);
 	werase(debugwin);
+  werase(achvwin);
+  werase(chatwin);
 
 	dwborder(debugwin);
-
-  coords.d_print(debugwin, 1, 3);
-  d_print_maxwin(debugwin, 1, 32, gamewin);
 
   wattron(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 	dwborder(gamewin);
   wattroff(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 
-  if (st == GAME) {
+  dwborder(achvwin);
+  dwborder(chatwin);
+
+  coords.d_print(debugwin, 1, 3);
+  d_print_maxwin(debugwin, 1, 32, gamewin);
+
+  if (st == AppState::GAME) {
     draw_game();
+    draw_chat();
   }
-  else if (st == MAIN_MENU) {
+  else if (st == AppState::MAIN_MENU) {
     draw_main_menu(cur_btn);
+    draw_info();
   }
-  else if (st == OPTIONS) {
+  else if (st == AppState::OPTIONS) {
     draw_options(cur_btn);
   }
 
   wrefresh(gamewin);
 	wrefresh(debugwin);
+  wrefresh(achvwin);
+  wrefresh(chatwin);
 }
 
 void draw_game() {
@@ -202,8 +232,17 @@ void draw_game() {
   player.draw(gamewin, GW_CTRY - 2, GW_CTRX - 2, true);
 }
 
+void draw_chat() {
+  mvwaddstr(chatwin, 2, 2, "Test");
+  chat.draw(chatwin);
+}
+
 void draw_main_menu(int cur_btn) {
   draw_txt(gamewin, 2, 4, logo_path, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
+
+  wattron(gamewin, COLOR_PAIR(Colors::splash.cp));
+  mvwaddstr(gamewin, 6, GW_COLS - strlen(splash) - 3, splash);
+  wattroff(gamewin, COLOR_PAIR(Colors::splash.cp));
 
   int btn_width = 16;
   int btn_height = 3;
@@ -216,6 +255,13 @@ void draw_main_menu(int cur_btn) {
       1, 1, btn_labels[0][btn_no], cur_btn == btn_no
     );
   }
+}
+
+void draw_info() {
+  mvwaddstr(achvwin, 1, 1, "Welcome to Minhcraft!");
+  mvwaddstr(achvwin, 2, 1, "See the starter guide below:");
+
+  draw_txt(chatwin, 1, 1, CLC_APPDATA "intro.txt");
 }
 
 void draw_options(int cur_btn) {

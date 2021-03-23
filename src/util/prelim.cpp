@@ -33,4 +33,5 @@ void curses_init_pairs() {
   init_pair(Colors::win_brdr.cp, Colors::win_brdr.fg, Colors::win_brdr.bg);
   init_pair(Colors::btn_hghl.cp, Colors::btn_hghl.fg, Colors::btn_hghl.bg);
   init_pair(Colors::sect_hdr.cp, Colors::sect_hdr.fg, Colors::sect_hdr.bg);
+  init_pair(Colors::splash.cp,   Colors::splash.fg,   Colors::splash.bg);
 }

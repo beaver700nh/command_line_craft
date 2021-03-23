@@ -28,7 +28,7 @@ const char btn_labels[][50][30] = {
 };
 
 int get_up_btn(int cur_btn, AppState st) {
-  if (st == MAIN_MENU) {
+  if (st == AppState::MAIN_MENU) {
     if (cur_btn == 0) {
       return 2;
     }
@@ -36,7 +36,7 @@ int get_up_btn(int cur_btn, AppState st) {
       return cur_btn - 1;
     }
   }
-  else if (st == OPTIONS) {
+  else if (st == AppState::OPTIONS) {
     if (cur_btn == 0 || cur_btn == 1) {
       return 10;
     }
@@ -49,7 +49,7 @@ int get_up_btn(int cur_btn, AppState st) {
 }
 
 int get_down_btn(int cur_btn, AppState st) {
-  if (st == MAIN_MENU) {
+  if (st == AppState::MAIN_MENU) {
     if (cur_btn == 2) {
       return 0;
     }
@@ -57,7 +57,7 @@ int get_down_btn(int cur_btn, AppState st) {
       return cur_btn + 1;
     }
   }
-  else if (st == OPTIONS) {
+  else if (st == AppState::OPTIONS) {
     if (cur_btn == 8 || cur_btn == 9) {
       return 10;
     }
@@ -73,7 +73,7 @@ int get_down_btn(int cur_btn, AppState st) {
 }
 
 int get_left_btn(int cur_btn, AppState st) {
-  if (st == OPTIONS) {
+  if (st == AppState::OPTIONS) {
     if (cur_btn == 10) {
       return 10;
     }
@@ -89,7 +89,7 @@ int get_left_btn(int cur_btn, AppState st) {
 }
 
 int get_right_btn(int cur_btn, AppState st) {
-  if (st == OPTIONS) {
+  if (st == AppState::OPTIONS) {
     if (cur_btn == 10) {
       return 10;
     }

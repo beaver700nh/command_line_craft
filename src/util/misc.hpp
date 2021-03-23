@@ -19,4 +19,7 @@ chtype decode_lookup(char b);
 
 int get_rand_num(int min, int outcomes, std::mt19937 rng);
 
+int set_logo(char *dest, std::mt19937 rng);
+int set_splash(char *dest, std::mt19937 rng);
+
 #endif

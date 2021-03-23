@@ -1,7 +1,10 @@
 #include <ncurses.h>
+
+#include "../game.hpp"
+
 #include "keypress.hpp"
 
-int handle_keypress(int ch) {
+int handle_keypress(int ch, AppState st, FocusType fc) {
   if (ch == ERR) {
     return ActionMisc::idle;
   }
@@ -35,10 +38,27 @@ int handle_keypress(int ch) {
   else if (ch == KEY_RIGHT) { // TEMPORARY
     return ActionSelect::sel_right;
   }
-  else if (ch == '\n') { // TEMPORARY
-    return ActionSelect::sel_ok;
+  else if (ch == '\n') {
+    if (fc == FocusType::MENU) {
+      return ActionSelect::sel_ok;
+    }
+    else if (fc == FocusType::CHAT) {
+      return ActionChat::send;
+    }
   }
-  else {
-    return ActionMisc::other;
+  else if (ch == 't') {
+    if (fc == FocusType::GAME) {
+      return ActionChat::focus;
+    }
+    else if (fc == FocusType::CHAT) {
+      return ActionChat::unfcs;
+    }
   }
+  else if (ch == '/') {
+    if (fc == FocusType::GAME) {
+      return ActionChat::cmd;
+    }
+  }
+
+  return ActionMisc::other;
 }
