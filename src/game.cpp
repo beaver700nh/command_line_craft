@@ -178,7 +178,7 @@ int input() {
   }
   else if (result == ActionMisc::other) {
     if (fc == FocusType::CHAT) {
-      chat.i_am_typing_more("hi");
+      chat.i_am_typing_more(std::string(1, (char) ch));
     }
   }
   else if (result == ActionMisc::idle) {

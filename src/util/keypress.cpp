@@ -9,22 +9,37 @@ int handle_keypress(int ch, AppState st, FocusType fc) {
     return ActionMisc::idle;
   }
   else if (ch == 27) {
-    return ActionMisc::quit;
+    if (fc == FocusType::GAME) {
+      return ActionMisc::quit;
+    }
+    else if (fc == FocusType::CHAT) {
+      return ActionChat::unfcs;
+    }
   }
   else if (ch == 'w') {
-    return ActionMove::up;
+    if (fc == FocusType::GAME) {
+      return ActionMove::up;
+    }
   }
   else if (ch == 'a') {
-    return ActionMove::left;
+    if (fc == FocusType::GAME) {
+      return ActionMove::left;
+    }
   }
   else if (ch == 's') {
-    return ActionMove::down;
+    if (fc == FocusType::GAME) {
+      return ActionMove::down;
+    }
   }
   else if (ch == 'd') {
-    return ActionMove::right;
+    if (fc == FocusType::GAME) {
+      return ActionMove::right;
+    }
   }
   else if (ch == 'e') { // TEMPORARY
-    return ActionInteract::sleep;
+    if (fc == FocusType::GAME) {
+      return ActionInteract::sleep;
+    }
   }
   else if (ch == KEY_UP) { // TEMPORARY
     return ActionSelect::sel_up;
@@ -49,9 +64,6 @@ int handle_keypress(int ch, AppState st, FocusType fc) {
   else if (ch == 't') {
     if (fc == FocusType::GAME) {
       return ActionChat::focus;
-    }
-    else if (fc == FocusType::CHAT) {
-      return ActionChat::unfcs;
     }
   }
   else if (ch == '/') {
