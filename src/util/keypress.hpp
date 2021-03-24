@@ -14,6 +14,7 @@ namespace ActionMisc {
   constexpr int idle  = 0x21;
   constexpr int quit  = 0x22;
   constexpr int other = 0x23;
+  constexpr int qtmm  = 0x24;
 };
 
 namespace ActionInteract {
@@ -44,6 +45,7 @@ namespace ActionChat {
   constexpr int cmd   = 0x72;
   constexpr int send  = 0x73;
   constexpr int unfcs = 0x74;
+  constexpr int bksp  = 0x75;
 };
 
 int handle_keypress(int ch, AppState st, FocusType fc);

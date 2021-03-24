@@ -9,8 +9,11 @@ int handle_keypress(int ch, AppState st, FocusType fc) {
     return ActionMisc::idle;
   }
   else if (ch == 27) {
-    if (fc == FocusType::GAME) {
+    if (fc == FocusType::MENU && st == AppState::MAIN_MENU) {
       return ActionMisc::quit;
+    }
+    else if (fc == FocusType::GAME) {
+      return ActionMisc::qtmm;
     }
     else if (fc == FocusType::CHAT) {
       return ActionChat::unfcs;
@@ -53,12 +56,17 @@ int handle_keypress(int ch, AppState st, FocusType fc) {
   else if (ch == KEY_RIGHT) { // TEMPORARY
     return ActionSelect::sel_right;
   }
-  else if (ch == '\n') {
+  else if (ch == '\n' || ch == '\r') {
     if (fc == FocusType::MENU) {
       return ActionSelect::sel_ok;
     }
     else if (fc == FocusType::CHAT) {
       return ActionChat::send;
+    }
+  }
+  else if (ch == '\b' || ch == 127 || ch == KEY_BACKSPACE || ch == KEY_DC) {
+    if (fc == FocusType::CHAT) {
+      return ActionChat::bksp;
     }
   }
   else if (ch == 't') {

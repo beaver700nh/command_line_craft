@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "command.hpp"
+
 typedef std::string Message;
 
 #define MSG_OLDEST -1
@@ -13,7 +15,7 @@ typedef std::string Message;
 class Chat {
   public:
     Chat();
-    Chat(std::vector<Message> messages);
+    Chat(std::vector<Message> messages, WINDOW *chatwin);
 
     void add_message(Message message);
     Message get_message(int recentness);
@@ -21,11 +23,17 @@ class Chat {
     void i_am_typing(Message message);
     void i_am_typing_more(Message more);
 
+    void backspace();
+
+    void send();
+
     void draw(WINDOW *win);
 
   private:
     std::vector<Message> messages;
     Message what_im_typing;
+
+    CmdEnv cmd_env;
 };
 
 #endif

@@ -75,6 +75,8 @@ int init() {
 
   curses_init_win(gamewin);
   curses_init_win(debugwin);
+  curses_init_win(achvwin);
+  curses_init_win(chatwin);
 
   curses_init_pairs();
 
@@ -111,6 +113,12 @@ int input() {
 
   if (result == ActionMisc::quit) {
     return -1;
+  }
+  else if (result == ActionMisc::qtmm) {
+    wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
+    cur_btn = 0;
+    st = AppState::MAIN_MENU;
+    fc = FocusType::MENU;
   }
   else if (result == ActionMove::up) {
     ++coords.y;
@@ -171,10 +179,13 @@ int input() {
     chat.i_am_typing("/");
   }
   else if (result == ActionChat::send) {
-    chat.i_am_typing("");
+    chat.send();
   }
   else if (result == ActionChat::unfcs) {
     fc = FocusType::GAME;
+  }
+  else if (result == ActionChat::bksp) {
+    chat.backspace();
   }
   else if (result == ActionMisc::other) {
     if (fc == FocusType::CHAT) {
