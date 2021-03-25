@@ -176,34 +176,34 @@ int input() {
   }
   else if (result == ActionSelect::sel_up) {
     if (st == AppState::MAIN_MENU) {
-      main_ms.highlight(main_ms.get_button(UP));
+      main_ms.highlight(main_ms.go(UP));
     }
     else if (st == AppState::OPTIONS) {
-      opts_ms.highlight(opts_ms.get_button(UP));
+      opts_ms.highlight(opts_ms.go(UP));
     }
   }
   else if (result == ActionSelect::sel_down) {
     if (st == AppState::MAIN_MENU) {
-      main_ms.highlight(main_ms.get_button(DOWN));
+      main_ms.highlight(main_ms.go(DOWN));
     }
     else if (st == AppState::OPTIONS) {
-      opts_ms.highlight(opts_ms.get_button(DOWN));
+      opts_ms.highlight(opts_ms.go(DOWN));
     }
   }
   else if (result == ActionSelect::sel_left) {
     if (st == AppState::MAIN_MENU) {
-      main_ms.highlight(main_ms.get_button(LEFT));
+      main_ms.highlight(main_ms.go(LEFT));
     }
     else if (st == AppState::OPTIONS) {
-      opts_ms.highlight(opts_ms.get_button(LEFT));
+      opts_ms.highlight(opts_ms.go(LEFT));
     }
   }
   else if (result == ActionSelect::sel_right) {
     if (st == AppState::MAIN_MENU) {
-      main_ms.highlight(main_ms.get_button(RIGHT));
+      main_ms.highlight(main_ms.go(RIGHT));
     }
     else if (st == AppState::OPTIONS) {
-      opts_ms.highlight(opts_ms.get_button(RIGHT));
+      opts_ms.highlight(opts_ms.go(RIGHT));
     }
   }
   else if (result == ActionSelect::sel_ok) {

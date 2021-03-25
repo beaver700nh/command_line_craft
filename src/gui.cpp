@@ -87,7 +87,15 @@ void MenuScreen::add_button(MenuButton button) {
   buttons.push_back(button);
 }
 
-int MenuScreen::get_button(int direction, int id) {
+void MenuScreen::set_button(int id, MenuButton button) {
+  buttons.at(id) = button;
+}
+
+MenuButton &MenuScreen::get_button(int id) {
+  return buttons.at(id);
+}
+
+int MenuScreen::go(int direction, int id) {
   if (id == -1) {
     id = highlighted_;
   }
