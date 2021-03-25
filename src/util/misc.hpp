@@ -8,6 +8,8 @@
 
 #define dwborder(win) box(win, 0, 0)
 
+enum {UP, DOWN, LEFT, RIGHT};
+
 class Coords {
   public:
     long x = 0, y = 0;

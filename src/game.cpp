@@ -10,6 +10,7 @@
 #include "chat.hpp"
 #include "game.hpp"
 #include "gfx_core.hpp"
+#include "gui.hpp"
 #include "player.hpp"
 #include "world.hpp"
 
@@ -32,6 +33,8 @@ AppState st = AppState::MAIN_MENU;
 FocusType fc = FocusType::MENU;
 
 int cur_btn = 0;
+
+MenuScreen main_ms, opts_ms;
 
 Coords coords;
 Player player;
@@ -56,14 +59,11 @@ int init() {
     return result;
   }
 
-  player = Player(
-    Unit(PlayerReprs::up1(), 0), Unit(PlayerReprs::up2(), 0), \
-    Unit(PlayerReprs::dn1(), 0), Unit(PlayerReprs::dn2(), 0)
-  );
+  int logo_success = set_logo(logo_path, rng);
+  if (logo_success != 0) return -3;
 
-  world = World(3);
-  world.plane.set_data(0, 0, Unit("%%", 0));
-  world.plane.set_data(22, 24, Unit("><", 0));
+  int splash_success = set_splash(splash, rng);
+  if (splash_success != 0) return -4;
 
   gamewin = newwin(26, 50, 5, 9);
   getmaxyx(gamewin, GW_ROWS, GW_COLS);
@@ -77,17 +77,62 @@ int init() {
   curses_init_win(debugwin);
   curses_init_win(achvwin);
   curses_init_win(chatwin);
-
   curses_init_pairs();
 
   default_bkgd = getbkgd(gamewin);
   wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 
-  int logo_success = set_logo(logo_path, rng);
-  if (logo_success != 0) return -3;
+  player = Player(
+    Unit(PlayerReprs::up1(), 0), Unit(PlayerReprs::up2(), 0), \
+    Unit(PlayerReprs::dn1(), 0), Unit(PlayerReprs::dn2(), 0)
+  );
 
-  int splash_success = set_splash(splash, rng);
-  if (splash_success != 0) return -4;
+  world = World(3);
+  world.plane.set_data(0, 0, Unit("%%", 0));
+  world.plane.set_data(22, 24, Unit("><", 0));
+  
+  main_ms = MenuScreen(
+    MenuHeader(2, 4, logo_path, MHType::FILE, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD),
+    {
+      MenuButton(10, GW_CTRC - 9, 16, 3, "Play",    0, true),
+      MenuButton(14, GW_CTRC - 9, 16, 3, "Options", 1, true),
+      MenuButton(18, GW_CTRC - 9, 16, 3, "Quit",    2, true),
+    },
+    {
+      {{UP, 2}, {DOWN, 1}, {LEFT, 0}, {RIGHT, 0}},
+      {{UP, 0}, {DOWN, 2}, {LEFT, 1}, {RIGHT, 1}},
+      {{UP, 1}, {DOWN, 0}, {LEFT, 2}, {RIGHT, 2}},
+    }
+  );
+
+  opts_ms = MenuScreen(
+    {
+      MenuButton(6,  GW_CTRC - 23, 22, 3, "Music: xx%",         0,  true),
+      MenuButton(6,  GW_CTRC + 1,  22, 3, "Sound Effects: xx%", 1,  true),
+      MenuButton(9,  GW_CTRC - 23, 22, 3, "Invert Mouse: xxx",  2,  true),
+      MenuButton(9,  GW_CTRC + 1,  22, 3, "Difficulty: xxxxxx", 3,  true),
+      MenuButton(12, GW_CTRC - 23, 22, 3, "TBD, IDK yet",       4,  true),
+      MenuButton(12, GW_CTRC + 1,  22, 3, "Controls...",        5,  true),
+      MenuButton(15, GW_CTRC - 23, 22, 3, "Texture Packs...",   6,  true),
+      MenuButton(15, GW_CTRC + 1,  22, 3, "Recipes...",         7,  true),
+      MenuButton(18, GW_CTRC - 23, 22, 3, "Color Packs...",     8,  true),
+      MenuButton(18, GW_CTRC + 1,  22, 3, "Items...",           9,  true),
+      MenuButton(21, GW_CTRC - 12, 22, 3, "Back to Main Menu",  10, true),
+    },
+    {
+      {{UP, 10}, {DOWN,  2}, {LEFT,  1}, {RIGHT,  1}},
+      {{UP, 10}, {DOWN,  3}, {LEFT,  0}, {RIGHT,  0}},
+      {{UP,  0}, {DOWN,  4}, {LEFT,  3}, {RIGHT,  3}},
+      {{UP,  1}, {DOWN,  5}, {LEFT,  2}, {RIGHT,  2}},
+      {{UP,  2}, {DOWN,  6}, {LEFT,  5}, {RIGHT,  5}},
+      {{UP,  3}, {DOWN,  7}, {LEFT,  4}, {RIGHT,  4}},
+      {{UP,  4}, {DOWN,  8}, {LEFT,  7}, {RIGHT,  7}},
+      {{UP,  5}, {DOWN,  9}, {LEFT,  6}, {RIGHT,  6}},
+      {{UP,  6}, {DOWN, 10}, {LEFT,  9}, {RIGHT,  9}},
+      {{UP,  7}, {DOWN, 10}, {LEFT,  8}, {RIGHT,  8}},
+      {{UP,  8}, {DOWN,  0}, {LEFT, 10}, {RIGHT, 10}},
+    }
+  );
 
   return 0;
 }
@@ -137,15 +182,43 @@ int input() {
   }
   else if (result == ActionSelect::sel_up) {
     cur_btn = get_up_btn(cur_btn, st);
+
+    if (st == AppState::MAIN_MENU) {
+      main_ms.highlight(main_ms.get_button(UP));
+    }
+    else if (st == AppState::OPTIONS) {
+      opts_ms.highlight(opts_ms.get_button(UP));
+    }
   }
   else if (result == ActionSelect::sel_down) {
     cur_btn = get_down_btn(cur_btn, st);
+
+    if (st == AppState::MAIN_MENU) {
+      main_ms.highlight(main_ms.get_button(DOWN));
+    }
+    else if (st == AppState::OPTIONS) {
+      opts_ms.highlight(opts_ms.get_button(DOWN));
+    }
   }
   else if (result == ActionSelect::sel_left) {
     cur_btn = get_left_btn(cur_btn, st);
+
+    if (st == AppState::MAIN_MENU) {
+      main_ms.highlight(main_ms.get_button(LEFT));
+    }
+    else if (st == AppState::OPTIONS) {
+      opts_ms.highlight(opts_ms.get_button(LEFT));
+    }
   }
   else if (result == ActionSelect::sel_right) {
     cur_btn = get_right_btn(cur_btn, st);
+
+    if (st == AppState::MAIN_MENU) {
+      main_ms.highlight(main_ms.get_button(RIGHT));
+    }
+    else if (st == AppState::OPTIONS) {
+      opts_ms.highlight(opts_ms.get_button(RIGHT));
+    }
   }
   else if (result == ActionSelect::sel_ok) {
     if (st == AppState::MAIN_MENU) {
@@ -249,23 +322,25 @@ void draw_chat() {
 }
 
 void draw_main_menu(int cur_btn) {
-  draw_txt(gamewin, 2, 4, logo_path, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
+  // draw_txt(gamewin, 2, 4, logo_path, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
 
-  wattron(gamewin, COLOR_PAIR(Colors::splash.cp));
-  mvwaddstr(gamewin, 6, GW_COLS - strlen(splash) - 3, splash);
-  wattroff(gamewin, COLOR_PAIR(Colors::splash.cp));
+  // wattron(gamewin, COLOR_PAIR(Colors::splash.cp));
+  // mvwaddstr(gamewin, 6, GW_COLS - strlen(splash) - 3, splash);
+  // wattroff(gamewin, COLOR_PAIR(Colors::splash.cp));
 
-  int btn_width = 16;
-  int btn_height = 3;
-  int top  = 10;
-  int left = GW_CTRC - btn_width/2 - 1;
+  // int btn_width = 16;
+  // int btn_height = 3;
+  // int top  = 10;
+  // int left = GW_CTRC - btn_width/2 - 1;
 
-  for (int btn_no = 0; btn_no < 3; ++btn_no) {
-    draw_btn(
-      gamewin, top + (btn_height+1) * btn_no, left, btn_width, btn_height,
-      1, 1, btn_labels[0][btn_no], cur_btn == btn_no
-    );
-  }
+  // for (int btn_no = 0; btn_no < 3; ++btn_no) {
+  //   draw_btn(
+  //     gamewin, top + (btn_height+1) * btn_no, left, btn_width, btn_height,
+  //     1, 1, btn_labels[0][btn_no], cur_btn == btn_no
+  //   );
+  // }
+
+  main_ms.draw(gamewin, 0, 0);
 }
 
 void draw_info() {
@@ -276,32 +351,34 @@ void draw_info() {
 }
 
 void draw_options(int cur_btn) {
-  draw_txt(gamewin, 2, 13, CLC_APPDATA "asciiart/options.txt", COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
+  // draw_txt(gamewin, 2, 13, CLC_APPDATA "asciiart/options.txt", COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
 
-  int btn_width = 22;
-  int btn_height = 3;
-  int top  = 6;
-  int left = GW_CTRC - btn_width - 1;
+  // int btn_width = 22;
+  // int btn_height = 3;
+  // int top  = 6;
+  // int left = GW_CTRC - btn_width - 1;
 
-  for (int btn_no = 0; btn_no < 10; ++btn_no) {
-    if (btn_no % 2 == 0) { // left column
-      draw_btn(
-        gamewin, top + btn_height * (btn_no / 2), left, btn_width, btn_height,
-        1, 1, btn_labels[1][btn_no], cur_btn == btn_no
-      );
-    }
-    else { // right column
-      draw_btn(
-        gamewin, top + btn_height * (btn_no / 2), GW_CTRC + 1, btn_width, btn_height,
-        1, 1, btn_labels[1][btn_no], cur_btn == btn_no
-      );
-    }
-  }
+  // for (int btn_no = 0; btn_no < 10; ++btn_no) {
+  //   if (btn_no % 2 == 0) { // left column
+  //     draw_btn(
+  //       gamewin, top + btn_height * (btn_no / 2), left, btn_width, btn_height,
+  //       1, 1, btn_labels[1][btn_no], cur_btn == btn_no
+  //     );
+  //   }
+  //   else { // right column
+  //     draw_btn(
+  //       gamewin, top + btn_height * (btn_no / 2), GW_CTRC + 1, btn_width, btn_height,
+  //       1, 1, btn_labels[1][btn_no], cur_btn == btn_no
+  //     );
+  //   }
+  // }
 
-  draw_btn( // "back" button (at bottom)
-    gamewin, top + btn_height * 5, GW_CTRC - btn_width/2 - 1, btn_width, btn_height,
-    1, 1, btn_labels[1][10], cur_btn == 10
-  );
+  // draw_btn( // "back" button (at bottom)
+  //   gamewin, top + btn_height * 5, GW_CTRC - btn_width/2 - 1, btn_width, btn_height,
+  //   1, 1, btn_labels[1][10], cur_btn == 10
+  // );
+
+  opts_ms.draw(gamewin, 0, 0);
 }
 
 void end() {
