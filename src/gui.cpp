@@ -89,7 +89,7 @@ void MenuScreen::add_button(MenuButton button) {
 
 int MenuScreen::get_button(int direction, int id) {
   if (id == -1) {
-    id = highlighted;
+    id = highlighted_;
   }
 
   if (id >= layout.size()) {
@@ -100,7 +100,15 @@ int MenuScreen::get_button(int direction, int id) {
 }
 
 void MenuScreen::highlight(int id) {
-  highlighted = id;
+  highlighted_ = id;
+}
+
+bool MenuScreen::highlighting(int id) {
+  return (highlighted_ == id);
+}
+
+int MenuScreen::highlighted() {
+  return highlighted_;
 }
 
 void MenuScreen::set_layout(std::vector<std::unordered_map<int, int>> layout) {
@@ -118,6 +126,6 @@ void MenuScreen::draw(WINDOW *win, int row, int col, bool border) {
   header.draw(win, row, col);
 
   for (auto b : buttons) {
-    b.draw(win, (b.id == highlighted), row, col);
+    b.draw(win, (b.id == highlighted_), row, col);
   }
 }

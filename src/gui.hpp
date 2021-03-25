@@ -42,6 +42,8 @@ class MenuScreen {
     void add_button(MenuButton button);
     int  get_button(int direction, int id = -1);
     void highlight(int id);
+    bool highlighting(int id);
+    int  highlighted();
     void set_layout(std::vector<std::unordered_map<int, int>> layout);
 
     void draw(WINDOW *win, int row, int col, bool border = false);
@@ -49,7 +51,7 @@ class MenuScreen {
   private:
     MenuHeader header;
 
-    int highlighted = 0;
+    int highlighted_ = 0;
 
     std::vector<MenuButton> buttons;
     std::vector<std::unordered_map<int, int>> layout;

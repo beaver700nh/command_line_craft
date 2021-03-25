@@ -32,8 +32,6 @@
 AppState st = AppState::MAIN_MENU;
 FocusType fc = FocusType::MENU;
 
-int cur_btn = 0;
-
 MenuScreen main_ms, opts_ms;
 
 Coords coords;
@@ -161,7 +159,8 @@ int input() {
   }
   else if (result == ActionMisc::qtmm) {
     wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
-    cur_btn = 0;
+    //cur_btn = 0;
+    main_ms.highlight(0);
     st = AppState::MAIN_MENU;
     fc = FocusType::MENU;
   }
@@ -181,7 +180,7 @@ int input() {
     player.standing = !player.standing;
   }
   else if (result == ActionSelect::sel_up) {
-    cur_btn = get_up_btn(cur_btn, st);
+    //cur_btn = get_up_btn(cur_btn, st);
 
     if (st == AppState::MAIN_MENU) {
       main_ms.highlight(main_ms.get_button(UP));
@@ -191,7 +190,7 @@ int input() {
     }
   }
   else if (result == ActionSelect::sel_down) {
-    cur_btn = get_down_btn(cur_btn, st);
+    //cur_btn = get_down_btn(cur_btn, st);
 
     if (st == AppState::MAIN_MENU) {
       main_ms.highlight(main_ms.get_button(DOWN));
@@ -201,7 +200,7 @@ int input() {
     }
   }
   else if (result == ActionSelect::sel_left) {
-    cur_btn = get_left_btn(cur_btn, st);
+    //cur_btn = get_left_btn(cur_btn, st);
 
     if (st == AppState::MAIN_MENU) {
       main_ms.highlight(main_ms.get_button(LEFT));
@@ -211,7 +210,7 @@ int input() {
     }
   }
   else if (result == ActionSelect::sel_right) {
-    cur_btn = get_right_btn(cur_btn, st);
+    //cur_btn = get_right_btn(cur_btn, st);
 
     if (st == AppState::MAIN_MENU) {
       main_ms.highlight(main_ms.get_button(RIGHT));
@@ -222,23 +221,43 @@ int input() {
   }
   else if (result == ActionSelect::sel_ok) {
     if (st == AppState::MAIN_MENU) {
-      if (cur_btn == 0) {
+      // if (cur_btn == 0) {
+      //   wbkgdset(gamewin, default_bkgd);
+      //   st = AppState::GAME;
+      //   fc = FocusType::GAME;
+      // }
+      // else if (cur_btn == 1) {
+      //   cur_btn = 0;
+      //   st = AppState::OPTIONS;
+      //   fc = FocusType::MENU;
+      // }
+      // else if (cur_btn == 2) {
+      //   return -1;
+      // }
+      if (main_ms.highlighting(0)) {
         wbkgdset(gamewin, default_bkgd);
         st = AppState::GAME;
         fc = FocusType::GAME;
       }
-      else if (cur_btn == 1) {
-        cur_btn = 0;
+      else if (main_ms.highlighting(1)) {
+        main_ms.highlight(0);
+        opts_ms.highlight(0);
         st = AppState::OPTIONS;
         fc = FocusType::MENU;
       }
-      else if (cur_btn == 2) {
+      else if (main_ms.highlighting(2)) {
         return -1;
       }
     }
     else if (st == AppState::OPTIONS) {
-      if (cur_btn == 10) {
-        cur_btn = 0;
+      // if (cur_btn == 10) {
+      //   cur_btn = 0;
+      //   st = AppState::MAIN_MENU;
+      //   fc = FocusType::MENU;
+      // }
+      if (opts_ms.highlighting(10)) {
+        opts_ms.highlight(0);
+        main_ms.highlight(0);
         st = AppState::MAIN_MENU;
         fc = FocusType::MENU;
       }
@@ -298,11 +317,13 @@ void output() {
     draw_chat();
   }
   else if (st == AppState::MAIN_MENU) {
-    draw_main_menu(cur_btn);
+    // draw_main_menu(cur_btn);
+    main_ms.draw(gamewin, 0, 0);
     draw_info();
   }
   else if (st == AppState::OPTIONS) {
-    draw_options(cur_btn);
+    //draw_options(cur_btn);
+    opts_ms.draw(gamewin, 0, 0);
   }
 
   wrefresh(gamewin);
