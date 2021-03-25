@@ -22,12 +22,12 @@ MenuButton::MenuButton(int row, int col, int width, int height, const char *text
 }
 
 void MenuButton::draw(WINDOW *win, bool hghl, int row_offset, int col_offset) {
-  attron(attrs);
+  wattron(win, attrs);
   draw_btn(
     win, row_offset + row, col_offset + col, width, height, 
     height / 2, (centered ? (width - strlen(text)) / 2 : 1), text, hghl
   );
-  attroff(attrs);
+  wattroff(win, attrs);
 }
 
 MenuHeader::MenuHeader() {

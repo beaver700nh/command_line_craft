@@ -24,8 +24,6 @@
 #include "data/colors.hpp"
 #include "data/constants.hpp"
 
-#define ESC 27
-
 #define US_PER_SEC 1000000
 #define TARGET_FPS 30
 
@@ -57,11 +55,8 @@ int init() {
     return result;
   }
 
-  int logo_success = set_logo(logo_path, rng);
-  if (logo_success != 0) return -3;
-
-  int splash_success = set_splash(splash, rng);
-  if (splash_success != 0) return -4;
+  if (set_logo(logo_path, rng) != 0) return -3;
+  if (set_splash(splash, rng) != 0) return -4;
 
   gamewin = newwin(26, 50, 5, 9);
   getmaxyx(gamewin, GW_ROWS, GW_COLS);
@@ -104,6 +99,7 @@ int init() {
   );
 
   opts_ms = MenuScreen(
+    MenuHeader(2, 13, CLC_APPDATA "asciiart/options.txt", MHType::FILE, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD),
     {
       MenuButton(6,  GW_CTRC - 23, 22, 3, "Music: xx%",         0,  true),
       MenuButton(6,  GW_CTRC + 1,  22, 3, "Sound Effects: xx%", 1,  true),
@@ -159,7 +155,6 @@ int input() {
   }
   else if (result == ActionMisc::qtmm) {
     wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
-    //cur_btn = 0;
     main_ms.highlight(0);
     st = AppState::MAIN_MENU;
     fc = FocusType::MENU;
@@ -180,8 +175,6 @@ int input() {
     player.standing = !player.standing;
   }
   else if (result == ActionSelect::sel_up) {
-    //cur_btn = get_up_btn(cur_btn, st);
-
     if (st == AppState::MAIN_MENU) {
       main_ms.highlight(main_ms.get_button(UP));
     }
@@ -190,8 +183,6 @@ int input() {
     }
   }
   else if (result == ActionSelect::sel_down) {
-    //cur_btn = get_down_btn(cur_btn, st);
-
     if (st == AppState::MAIN_MENU) {
       main_ms.highlight(main_ms.get_button(DOWN));
     }
@@ -200,8 +191,6 @@ int input() {
     }
   }
   else if (result == ActionSelect::sel_left) {
-    //cur_btn = get_left_btn(cur_btn, st);
-
     if (st == AppState::MAIN_MENU) {
       main_ms.highlight(main_ms.get_button(LEFT));
     }
@@ -210,8 +199,6 @@ int input() {
     }
   }
   else if (result == ActionSelect::sel_right) {
-    //cur_btn = get_right_btn(cur_btn, st);
-
     if (st == AppState::MAIN_MENU) {
       main_ms.highlight(main_ms.get_button(RIGHT));
     }
@@ -221,19 +208,6 @@ int input() {
   }
   else if (result == ActionSelect::sel_ok) {
     if (st == AppState::MAIN_MENU) {
-      // if (cur_btn == 0) {
-      //   wbkgdset(gamewin, default_bkgd);
-      //   st = AppState::GAME;
-      //   fc = FocusType::GAME;
-      // }
-      // else if (cur_btn == 1) {
-      //   cur_btn = 0;
-      //   st = AppState::OPTIONS;
-      //   fc = FocusType::MENU;
-      // }
-      // else if (cur_btn == 2) {
-      //   return -1;
-      // }
       if (main_ms.highlighting(0)) {
         wbkgdset(gamewin, default_bkgd);
         st = AppState::GAME;
@@ -250,11 +224,6 @@ int input() {
       }
     }
     else if (st == AppState::OPTIONS) {
-      // if (cur_btn == 10) {
-      //   cur_btn = 0;
-      //   st = AppState::MAIN_MENU;
-      //   fc = FocusType::MENU;
-      // }
       if (opts_ms.highlighting(10)) {
         opts_ms.highlight(0);
         main_ms.highlight(0);
@@ -317,12 +286,13 @@ void output() {
     draw_chat();
   }
   else if (st == AppState::MAIN_MENU) {
-    // draw_main_menu(cur_btn);
     main_ms.draw(gamewin, 0, 0);
+    wattron(gamewin, COLOR_PAIR(Colors::splash.cp));
+    mvwaddstr(gamewin, 6, GW_COLS - 3 - strlen(splash), splash);
+    wattroff(gamewin, COLOR_PAIR(Colors::splash.cp));
     draw_info();
   }
   else if (st == AppState::OPTIONS) {
-    //draw_options(cur_btn);
     opts_ms.draw(gamewin, 0, 0);
   }
 
@@ -342,64 +312,11 @@ void draw_chat() {
   chat.draw(chatwin);
 }
 
-void draw_main_menu(int cur_btn) {
-  // draw_txt(gamewin, 2, 4, logo_path, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
-
-  // wattron(gamewin, COLOR_PAIR(Colors::splash.cp));
-  // mvwaddstr(gamewin, 6, GW_COLS - strlen(splash) - 3, splash);
-  // wattroff(gamewin, COLOR_PAIR(Colors::splash.cp));
-
-  // int btn_width = 16;
-  // int btn_height = 3;
-  // int top  = 10;
-  // int left = GW_CTRC - btn_width/2 - 1;
-
-  // for (int btn_no = 0; btn_no < 3; ++btn_no) {
-  //   draw_btn(
-  //     gamewin, top + (btn_height+1) * btn_no, left, btn_width, btn_height,
-  //     1, 1, btn_labels[0][btn_no], cur_btn == btn_no
-  //   );
-  // }
-
-  main_ms.draw(gamewin, 0, 0);
-}
-
 void draw_info() {
   mvwaddstr(achvwin, 1, 1, "Welcome to Minhcraft!");
   mvwaddstr(achvwin, 2, 1, "See the starter guide below:");
 
   draw_txt(chatwin, 1, 1, CLC_APPDATA "intro.txt");
-}
-
-void draw_options(int cur_btn) {
-  // draw_txt(gamewin, 2, 13, CLC_APPDATA "asciiart/options.txt", COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD);
-
-  // int btn_width = 22;
-  // int btn_height = 3;
-  // int top  = 6;
-  // int left = GW_CTRC - btn_width - 1;
-
-  // for (int btn_no = 0; btn_no < 10; ++btn_no) {
-  //   if (btn_no % 2 == 0) { // left column
-  //     draw_btn(
-  //       gamewin, top + btn_height * (btn_no / 2), left, btn_width, btn_height,
-  //       1, 1, btn_labels[1][btn_no], cur_btn == btn_no
-  //     );
-  //   }
-  //   else { // right column
-  //     draw_btn(
-  //       gamewin, top + btn_height * (btn_no / 2), GW_CTRC + 1, btn_width, btn_height,
-  //       1, 1, btn_labels[1][btn_no], cur_btn == btn_no
-  //     );
-  //   }
-  // }
-
-  // draw_btn( // "back" button (at bottom)
-  //   gamewin, top + btn_height * 5, GW_CTRC - btn_width/2 - 1, btn_width, btn_height,
-  //   1, 1, btn_labels[1][10], cur_btn == 10
-  // );
-
-  opts_ms.draw(gamewin, 0, 0);
 }
 
 void end() {
