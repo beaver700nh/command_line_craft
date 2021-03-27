@@ -35,9 +35,11 @@ void World::draw(WINDOW *win, long x, long y, int at_x, int at_y, bool should_of
 
   for (int row = 0; row < (should_offset ? rows - 2 : rows); ++row) {
     for (int col = 0; col < (should_offset ? (cols - 2) / 2 : cols); ++col) {
-      plane.get_data(x + at_x + col, y + at_y + row).draw(win, row, col, should_offset);
+      plane.get_data(col - at_x + x, row - at_y - y).draw(win, row, col, should_offset);
     }
   }
+
+  //plane.get_data(x, y).draw(win, at_x, at_y, should_offset);
 }
 
 void World::draw(WINDOW *win, Coords coords, int at_x, int at_y, bool should_offset) {

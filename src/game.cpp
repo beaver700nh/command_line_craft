@@ -81,8 +81,14 @@ int init() {
   );
 
   world = World(3);
-  world.plane.set_data(0, 0, Unit("%%", 0));
   world.plane.set_data(22, 24, Unit("><", 0));
+
+  char buf[100];
+
+  for (int i = -10; i <= 10; ++i) {
+    sprintf(buf, "%02d", i);
+    world.plane.set_data(i, 0, Unit(buf, 0));
+  }
   
   main_ms = MenuScreen(
     MenuHeader(2, 4, logo_path, MHType::FILE, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD),
@@ -303,8 +309,9 @@ void output() {
 }
 
 void draw_game() {
-  world.draw(gamewin, coords.x, coords.y, GW_CTRX, GW_CTRY, true);
-  player.draw(gamewin, GW_CTRY - 2, GW_CTRX - 2, true);
+  world.draw(gamewin, coords, GW_CTRX - 1, GW_CTRY - 1, true);
+  //world.draw(gamewin, 0, 0, 0, 0);
+  player.draw(gamewin, GW_CTRY - 1, GW_CTRX - 1, true);
 }
 
 void draw_chat() {
