@@ -39,7 +39,7 @@ void World::draw(WINDOW *win, long x, long y, int at_x, int at_y, bool should_of
     }
   }
 
-  //plane.get_data(x, y).draw(win, at_x, at_y, should_offset);
+  // plane.get_data(x, y).draw(win, at_x, at_y, should_offset);
 }
 
 void World::draw(WINDOW *win, Coords coords, int at_x, int at_y, bool should_offset) {

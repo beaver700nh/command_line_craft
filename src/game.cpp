@@ -85,10 +85,17 @@ int init() {
 
   char buf[100];
 
-  for (int i = -10; i <= 10; ++i) {
-    sprintf(buf, "%02d", i);
-    world.plane.set_data(i, 0, Unit(buf, 0));
-  }
+  // for (int r = -10; r <= 10; ++r) {
+  //   for (int c = -10; c <= 10; ++c) {
+  //     sprintf(buf, "%c%c", c+'M', r+'M');
+  //     world.plane.set_data(c, r, Unit(buf, 0));
+  //   }
+  // }
+
+  world.plane.set_data( 3,  3, Unit("UR", 0));
+  world.plane.set_data(-3,  3, Unit("UL", 0));
+  world.plane.set_data( 3, -3, Unit("LR", 0));
+  world.plane.set_data(-3, -3, Unit("LL", 0));
   
   main_ms = MenuScreen(
     MenuHeader(2, 4, logo_path, MHType::FILE, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD),
@@ -310,7 +317,6 @@ void output() {
 
 void draw_game() {
   world.draw(gamewin, coords, GW_CTRX - 1, GW_CTRY - 1, true);
-  //world.draw(gamewin, 0, 0, 0, 0);
   player.draw(gamewin, GW_CTRY - 1, GW_CTRX - 1, true);
 }
 
