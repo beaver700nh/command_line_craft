@@ -1,5 +1,6 @@
 #include <chrono>
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <ncurses.h>
 #include <sstream>
@@ -127,4 +128,60 @@ void Item::move(int rows, int cols) {
   if (rows != 0 || cols != 0) {
     updated = true;
   }
+}
+
+void draw_txt(WINDOW *win, int row, int col, const char *fname, int style) {
+  std::string line;
+  std::ifstream ifs(fname);
+
+  if (ifs.is_open()) {
+    for (int i = 0; std::getline(ifs, line); ++i) {
+      const char *temp = line.c_str();
+      char c_line[200];
+
+      int n = 0;
+
+      while (temp[n] != '\r' && temp[n] != '\n' && temp[n] != '\0') {
+        c_line[n] = temp[n];
+        ++n;
+      }
+
+      c_line[n] = '\0';
+
+      chtype d_line[50];
+      unicode_to_chtype(c_line, d_line);
+
+      for (int j = 0; d_line[j] != '\0'; ++j) {
+        mvwaddch(win, row + i, col + j, d_line[j] | style);
+      }
+    }
+  }
+  else {
+    char buf[50];
+    sprintf(buf, "Error: unable to open file %s", fname);
+    mvwaddstr(win, row, col, buf);
+  }
+
+  ifs.close();
+}
+
+void draw_box(WINDOW *win, int row, int col, int width, int height) {
+  mvwaddch(win, row,          col,         ACS_ULCORNER);
+  mvwaddch(win, row,          col+width-1, ACS_URCORNER);
+  mvwaddch(win, row+height-1, col,         ACS_LLCORNER);
+  mvwaddch(win, row+height-1, col+width-1, ACS_LRCORNER);
+
+  mvwhline(win, row,          col+1,       ACS_HLINE, width-2);
+  mvwhline(win, row+height-1, col+1,       ACS_HLINE, width-2);
+  mvwvline(win, row+1,        col,         ACS_VLINE, height-2);
+  mvwvline(win, row+1,        col+width-1, ACS_VLINE, height-2);
+}
+
+void draw_btn(WINDOW *win, int row, int col, int width, int height, int text_row, int text_col, const char *text, bool hghl) {
+  hghl && wattron(win, COLOR_PAIR(Colors::btn_hghl.cp));
+
+  draw_box(win,  row,          col,          width, height);
+  mvwaddstr(win, row+text_row, col+text_col, text);
+
+  hghl && wattroff(win, COLOR_PAIR(Colors::btn_hghl.cp));
 }

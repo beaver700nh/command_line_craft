@@ -1,6 +1,8 @@
 #ifndef KEYPRESS_HPP
 #define KEYPRESS_HPP
 
+#include "../game.hpp"
+
 namespace ActionMove {
   constexpr int up    = 0x11;
   constexpr int down  = 0x12;
@@ -9,18 +11,19 @@ namespace ActionMove {
 };
 
 namespace ActionMisc {
-  constexpr int idle  = 0x20;
-  constexpr int quit  = 0x21;
-  constexpr int other = 0x22;
+  constexpr int idle  = 0x21;
+  constexpr int quit  = 0x22;
+  constexpr int other = 0x23;
+  constexpr int qtmm  = 0x24;
 };
 
 namespace ActionInteract {
-  constexpr int press = 0x30;
-  constexpr int flick = 0x31;
-  constexpr int inven = 0x32;
-  constexpr int chest = 0x33;
-  constexpr int door  = 0x34;
-  constexpr int sleep = 0x35;
+  constexpr int press = 0x31;
+  constexpr int flick = 0x32;
+  constexpr int inven = 0x33;
+  constexpr int chest = 0x34;
+  constexpr int door  = 0x35;
+  constexpr int sleep = 0x36;
 };
 
 namespace ActionSelect {
@@ -34,9 +37,17 @@ namespace ActionSelect {
   constexpr int mv_left   = 0x53;
   constexpr int mv_right  = 0x54;
 
-  constexpr int sel_ok = 0x60;
+  constexpr int sel_ok = 0x61;
 };
 
-int handle_keypress(int ch);
+namespace ActionChat {
+  constexpr int focus = 0x71;
+  constexpr int cmd   = 0x72;
+  constexpr int send  = 0x73;
+  constexpr int unfcs = 0x74;
+  constexpr int bksp  = 0x75;
+};
+
+int handle_keypress(int ch, AppState st, FocusType fc);
 
 #endif
