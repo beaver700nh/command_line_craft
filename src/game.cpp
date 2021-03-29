@@ -83,15 +83,6 @@ int init() {
   world = World(3);
   world.plane.set_data(22, 24, Unit("><", 0));
 
-  char buf[100];
-
-  // for (int r = -10; r <= 10; ++r) {
-  //   for (int c = -10; c <= 10; ++c) {
-  //     sprintf(buf, "%c%c", c+'M', r+'M');
-  //     world.plane.set_data(c, r, Unit(buf, 0));
-  //   }
-  // }
-
   world.plane.set_data( 3,  3, Unit("UR", 0));
   world.plane.set_data(-3,  3, Unit("UL", 0));
   world.plane.set_data( 3, -3, Unit("LR", 0));
