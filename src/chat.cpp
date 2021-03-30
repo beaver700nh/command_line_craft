@@ -46,7 +46,8 @@ void Chat::backspace() {
 }
 
 void Chat::send() {
-  if (what_im_typing.at(0) == '/') {
+
+  if (what_im_typing.length() > 0 && what_im_typing.at(0) == '/') {
     std::string to_print;
     cmd_env.exec(what_im_typing.substr(1), to_print);
     add_message(to_print);

@@ -1,7 +1,8 @@
 #ifndef KEYPRESS_HPP
 #define KEYPRESS_HPP
 
-#include "../game.hpp"
+#include "event.hpp"
+#include "game.hpp"
 
 namespace ActionMove {
   constexpr int up    = 0x11;
@@ -48,6 +49,7 @@ namespace ActionChat {
   constexpr int bksp  = 0x75;
 };
 
-int handle_keypress(int ch, AppState st, FocusType fc);
+//int handle_keypress(int ch, AppState st, FocusType fc);
+Event handle_keypress(int ch, AppState st, FocusType fc);
 
 #endif
