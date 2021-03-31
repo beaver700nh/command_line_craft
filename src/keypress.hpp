@@ -49,7 +49,6 @@ namespace ActionChat {
   constexpr int bksp  = 0x75;
 };
 
-//int handle_keypress(int ch, AppState st, FocusType fc);
 Event handle_keypress(int ch, AppState st, FocusType fc);
 
 #endif
