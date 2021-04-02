@@ -9,6 +9,7 @@
 
 #include "chat.hpp"
 #include "game.hpp"
+#include "entity.hpp"
 #include "gfx_core.hpp"
 #include "gui.hpp"
 #include "keypress.hpp"
@@ -31,6 +32,8 @@ AppState st = AppState::MAIN_MENU;
 FocusType fc = FocusType::MENU;
 
 MenuScreen main_ms, opts_ms;
+
+Entity test;
 
 Coords coords;
 Player player;
@@ -74,6 +77,8 @@ int init() {
 
   default_bkgd = getbkgd(gamewin);
   wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
+
+  test = Entity(10, 5);
 
   player = Player(
     Unit(PlayerReprs::up1(), 0), Unit(PlayerReprs::up2(), 0), \
@@ -290,7 +295,8 @@ void output() {
   dwborder(achvwin);
   dwborder(chatwin);
 
-  coords.d_print(debugwin, 1, 3);
+  //coords.d_print(debugwin, 1, 3);
+  test.coords.d_print(debugwin, 1, 3);
   d_print_maxwin(debugwin, 1, 32, gamewin);
 
   if (st == AppState::GAME) {

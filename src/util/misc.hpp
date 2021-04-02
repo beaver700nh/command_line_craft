@@ -12,6 +12,10 @@ enum {UP, DOWN, LEFT, RIGHT};
 
 class Coords {
   public:
+    Coords();
+    Coords(Coords &coords);
+    Coords(long x, long y);
+
     long x = 0, y = 0;
     void d_print(WINDOW *win, int row, int col);
 };

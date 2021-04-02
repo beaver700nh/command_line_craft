@@ -8,6 +8,20 @@
 
 #include "../data/constants.hpp"
 
+Coords::Coords() {
+  /* default ctor does nothing */;
+}
+
+Coords::Coords(Coords &coords) {
+  x = coords.x;
+  y = coords.y;
+}
+
+Coords::Coords(long x, long y) {
+  this->x = x;
+  this->y = y;
+}
+
 void Coords::d_print(WINDOW *win, int row, int col) {
   char buf[100];
 
