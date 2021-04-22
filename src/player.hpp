@@ -2,6 +2,8 @@
 #define PLAYER_HPP
 
 #include <ncurses.h>
+
+#include "entity.hpp"
 #include "gfx_core.hpp"
 
 struct PlayerReprs {

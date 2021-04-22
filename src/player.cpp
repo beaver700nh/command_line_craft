@@ -1,6 +1,7 @@
 #include <cstring>
 #include <ncurses.h>
 
+#include "entity.hpp"
 #include "gfx_core.hpp"
 #include "player.hpp"
 

@@ -6,11 +6,12 @@
 class Entity {
   public:
     Entity();
-    Entity(Entity &entity);
-    Entity(Coords coords);
-    Entity(long x, long y);
+    Entity(const World &world, Entity &entity);
+    Entity(const World &world, Coords coords);
+    Entity(const World &world, long x, long y);
 
     Coords coords;
+    World &world;
 };
 
 #endif
