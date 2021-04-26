@@ -33,7 +33,7 @@ FocusType fc = FocusType::MENU;
 
 MenuScreen main_ms, opts_ms;
 
-Entity test;
+Entity entities[300];
 
 Coords coords;
 Player player;
@@ -78,8 +78,6 @@ int init() {
   default_bkgd = getbkgd(gamewin);
   wbkgdset(gamewin, COLOR_PAIR(Colors::win_brdr.cp));
 
-  test = Entity(10, 5);
-
   player = Player(
     Unit(PlayerReprs::up1(), 0), Unit(PlayerReprs::up2(), 0), \
     Unit(PlayerReprs::dn1(), 0), Unit(PlayerReprs::dn2(), 0)
@@ -92,6 +90,15 @@ int init() {
   world.plane.set_data(-3,  3, Unit("UL", 0));
   world.plane.set_data( 3, -3, Unit("LR", 0));
   world.plane.set_data(-3, -3, Unit("LL", 0));
+
+  entities[0] = Entity(
+    &world, {5, 5}, {1, 1}, false,
+    {
+      {
+        Unit("[]", 0),
+      },
+    }
+  );
   
   main_ms = MenuScreen(
     MenuHeader(2, 4, logo_path, MHType::FILE, COLOR_PAIR(Colors::sect_hdr.cp) | A_BOLD),
@@ -296,7 +303,7 @@ void output() {
   dwborder(chatwin);
 
   //coords.d_print(debugwin, 1, 3);
-  test.coords.d_print(debugwin, 1, 3);
+  entities[0].coords.d_print(debugwin, 1, 3);
   d_print_maxwin(debugwin, 1, 32, gamewin);
 
   if (st == AppState::GAME) {

@@ -1,17 +1,32 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
+#include <ncurses.h>
+#include <vector>
+
+#include "world.hpp"
+
 #include "util/misc.hpp"
 
 class Entity {
   public:
     Entity();
-    Entity(const World &world, Entity &entity);
-    Entity(const World &world, Coords coords);
-    Entity(const World &world, long x, long y);
+    Entity(World *world, Entity &entity);
+    Entity(
+      World *world, Coords coords, Coords hitbox, bool gravity,
+      std::vector<std::vector<Unit>> texture
+    );
+
+    void tick();
+    void draw(WINDOW *win);
 
     Coords coords;
-    World &world;
+    Coords hitbox;
+    World *world;
+
+    std::vector<std::vector<Unit>> texture;
+
+    bool gravity = true;
 };
 
 #endif
